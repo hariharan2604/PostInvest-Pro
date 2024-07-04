@@ -1,24 +1,22 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-
-var app = express();
-
-// view engine setup
+const createError = require('http-errors');
+const express = require('express');
+const logger = require('morgan');
+const app = express();
+const sequelize = require("./db/connection.js");
+(async () => {
+  try {
+    await sequelize.authenticate();
+    console.log("Connection has been established successfully.");
+  } catch (error) {
+    console.error("Unable to connect to the database:", error);
+  }
+})();
 
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-
+console.log("hello");
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
