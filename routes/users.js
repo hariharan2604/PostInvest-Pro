@@ -1,9 +1,11 @@
-var express = require('express');
-var router = express.Router();
+import express from 'express';
+import { verifyToken } from '../middlewares/authMiddleware.js';
 
-/* GET users listing. */
-router.get('/', function(req, res, next) {
+const router = express.Router();
+
+router.use(verifyToken);
+router.get('/test', function (req, res, next) {
   res.send('respond with a resource');
 });
 
-module.exports = router;
+export default router;

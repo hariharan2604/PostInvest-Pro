@@ -1,29 +1,31 @@
-const createError = require('http-errors');
-const express = require('express');
-const logger = require('morgan');
-const app = express();
-const sequelize = require("./db/connection.js");
-(async () => {
-  try {
-    await sequelize.authenticate();
-    console.log("Connection has been established successfully.");
-  } catch (error) {
-    console.error("Unable to connect to the database:", error);
-  }
-})();
+import createError from 'http-errors';
+import express from 'express';
+import logger from 'morgan';
+import cors from 'cors';
+import sequelize from './db/connection.js';
 
+import authRoutes from './routes/auth.js';
+import userRoutes from './routes/users.js';
+
+const app = express();
+
+sequelize.sync();
+
+app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-console.log("hello");
+app.use('/auth', authRoutes);
+app.use('/users', userRoutes);
+
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -33,4 +35,5 @@ app.use(function(err, req, res, next) {
   res.send('error');
 });
 
-module.exports = app;
+app.listen(process.env.PORT);
+// export default app;
