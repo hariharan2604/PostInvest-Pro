@@ -1,9 +1,19 @@
-const successResponse = (msg) => {
-    return { code: 200, data: msg };
+function createApiResponse(data, code) {
+    let status;
+    if (code >= 200 && code < 300) {
+        status = "success";
+    } else {
+        status = "error";
+    }
+
+    let response = {
+        status: status,
+        code: code,
+        data: status === "success" ? data : null,
+        error: status === "error" ? data : null
+    };
+
+    return response;
 }
 
-const errorResponse = (error) => {
-    return { code: 500, error: error };
-}
-
-export { successResponse, errorResponse };
+export { createApiResponse };

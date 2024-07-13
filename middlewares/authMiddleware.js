@@ -1,20 +1,26 @@
 import jwt from 'jsonwebtoken';
-import { successResponse, errorResponse } from '../utilities/httpResponse.js';
+import { createApiResponse } from '../utilities/httpResponse.js';
 
 function verifyToken(req, res, next) {
     const authHeader = req.header('Authorization');
-    if (!authHeader) return res.status(401).json(errorResponse({ message: 'Access denied' }));
+    if (!authHeader) {
+        let data = { message: 'Access denied' };
+        return res.json(createApiResponse(data, 401));
+    }
 
     const token = authHeader.split(' ')[1];
-    if (!token) return res.status(401).json(errorResponse({ message: 'Access denied' }));
+    if (!token) {
+        let data = { message: 'Access denied' };
+        return res.json(createApiResponse(data, 401));
+    }
 
     try {
         const decoded = jwt.verify(token, process.env.SECRET_KEY);
         req.userId = decoded.userId;
         next();
     } catch (error) {
-        console.log('error :10', error);
-        res.status(401).json(errorResponse({ message: 'Invalid token' }));
+        let data = { message: 'Token Expired', errmsg: error }
+        res.json(createApiResponse(data,500));
     }
 }
 
