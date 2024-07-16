@@ -1,11 +1,11 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../db/connection.js';
 import { v4 as uuidv4 } from 'uuid';
-import Customer from './Customer.js'
+import ReceiptType from './ReceiptType.js';
 
-class Agent extends Model { }
+class ReceiptCollection extends Model { }
 
-Agent.init(
+ReceiptCollection.init(
     {
         id: {
             type: DataTypes.UUID,
@@ -13,46 +13,41 @@ Agent.init(
             primaryKey: true,
             allowNull: false,
         },
-        name: {
-            type: DataTypes.STRING,
+        receipt_type_id: {
+            type: DataTypes.UUID,
             allowNull: false,
         },
-        dob: {
+        receipt_date: {
             type: DataTypes.DATE,
             allowNull: false,
         },
-        gender: {
-            type: DataTypes.STRING,
+        customer_id: {
+            type: DataTypes.UUID,
             allowNull: false,
         },
-        mobile: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            unique: true,
-        },
-        email: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            unique: true,
-            validate: {
-                isEmail: true,
-            },
-        },
-        password: {
-            type: DataTypes.STRING,
+        receipt_amount: {
+            type: DataTypes.FLOAT,
             allowNull: false,
         },
-        address1: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        address2: {
+        chq_number: {
             type: DataTypes.STRING,
             allowNull: true,
         },
-        area_id: {
+        cheque_date: {
+            type: DataTypes.DATE,
+            allowNull: true,
+        },
+        bank_id: {
             type: DataTypes.UUID,
+            allowNull: true,
+        },
+        instrument_class: {
+            type: DataTypes.STRING,
             allowNull: false,
+        },
+        sb_acc_number: {
+            type: DataTypes.STRING,
+            allowNull: true,
         },
         created_at: {
             type: DataTypes.DATE,
@@ -67,9 +62,12 @@ Agent.init(
     },
     {
         sequelize,
-        modelName: 'Agent',
+        modelName: 'ReceiptCollection',
     }
 );
 
+ReceiptCollection.belongsTo(Customer, { foreignKey: 'customer_id' });
+ReceiptCollection.belongsTo(BankDetail, { foreignKey: 'bank_id' });
+ReceiptCollection.belongsTo(ReceiptType, { foreignKey: 'receipt_type_id' });
 
-export default Agent;
+export default ReceiptCollection;
