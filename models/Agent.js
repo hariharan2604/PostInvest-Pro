@@ -49,8 +49,20 @@ Agent.init(
             type: DataTypes.STRING,
             allowNull: true,
         },
-        area_id: {
-            type: DataTypes.UUID,
+        area: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        city: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        state: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        zip: {
+            type: DataTypes.INTEGER,
             allowNull: false,
         },
         created_at: {
