@@ -46,5 +46,5 @@ InvestmentDetail.init(
     }
 );
 
-
+InvestmentDetail.belongsTo(Investment, { foreignKey: 'investment_id' });
 export default InvestmentDetail;
