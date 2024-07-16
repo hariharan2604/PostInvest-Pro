@@ -1,7 +1,6 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../db/connection.js';
 import { v4 as uuidv4 } from 'uuid';
-import Customer from './Customer.js'
 
 class Agent extends Model { }
 

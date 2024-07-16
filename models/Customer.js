@@ -56,7 +56,7 @@ Customer.init(
             allowNull: false,
         },
         relation: {
-            type: DataTypes.ARRAY(DataTypes.UUID),
+            type: DataTypes.JSON,
             allowNull: true,
         },
         agent_id: {

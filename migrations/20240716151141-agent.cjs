@@ -3,67 +3,62 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('Agent', {
       id: {
-        allowNull: false,
-        primaryKey: true,
         type: Sequelize.UUID,
-        defaultValue: Sequelize.UUIDV4
+        defaultValue: Sequelize.UUIDV4,
+        primaryKey: true,
+        allowNull: false,
       },
-      username: {
+      name: {
         type: Sequelize.STRING,
         allowNull: false,
-        unique: true
       },
-      password: {
+      dob: {
+        type: Sequelize.DATE,
+        allowNull: false,
+      },
+      gender: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
       },
       mobile: {
         type: Sequelize.STRING,
         allowNull: false,
-        unique: true
+        unique: true,
       },
       email: {
         type: Sequelize.STRING,
         allowNull: false,
         unique: true,
         validate: {
-          isEmail: true
-        }
+          isEmail: true,
+        },
       },
-      gender: {
+      password: {
         type: Sequelize.STRING,
-        allowNull: false
-      },
-      dob: {
-        type: Sequelize.DATE,
-        allowNull: false
-      },
-      address: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      area: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      state: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      zip: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      createdAt: {
         allowNull: false,
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW
       },
-      updatedAt: {
+      address1: {
+        type: Sequelize.STRING,
         allowNull: false,
+      },
+      address2: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      area_id: {
+        type: Sequelize.UUID,
+        allowNull: false,
+      },
+      created_at: {
         type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW
-      }
+        allowNull: false,
+        defaultValue: Sequelize.NOW,
+      },
+      updated_at: {
+        type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.NOW,
+      },
     });
   },
   down: async (queryInterface, Sequelize) => {
