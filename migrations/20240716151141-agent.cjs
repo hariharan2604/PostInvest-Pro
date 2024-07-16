@@ -45,8 +45,20 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      area_id: {
-        type: Sequelize.UUID,
+      area: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      city: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      state: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      zip: {
+        type: Sequelize.INTEGER,
         allowNull: false,
       },
       created_at: {
