@@ -1,16 +1,21 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../db/connection.js';
 import { v4 as uuidv4 } from 'uuid';
-import Customer from './Customer.js'
+import Agent from './Agent.js';
+import Area from './Area.js';
 
-class Agent extends Model { }
+class Customer extends Model { }
 
-Agent.init(
+Customer.init(
     {
         id: {
             type: DataTypes.UUID,
             defaultValue: uuidv4,
             primaryKey: true,
+            allowNull: false,
+        },
+        cif: {
+            type: DataTypes.STRING,
             allowNull: false,
         },
         name: {
@@ -38,10 +43,6 @@ Agent.init(
                 isEmail: true,
             },
         },
-        password: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
         address1: {
             type: DataTypes.STRING,
             allowNull: false,
@@ -51,6 +52,14 @@ Agent.init(
             allowNull: true,
         },
         area_id: {
+            type: DataTypes.UUID,
+            allowNull: false,
+        },
+        relation: {
+            type: DataTypes.ARRAY(DataTypes.UUID),
+            allowNull: true,
+        },
+        agent_id: {
             type: DataTypes.UUID,
             allowNull: false,
         },
@@ -67,9 +76,11 @@ Agent.init(
     },
     {
         sequelize,
-        modelName: 'Agent',
+        modelName: 'Customer',
     }
 );
 
+Customer.belongsTo(Agent, { foreignKey: 'agent_id' });
+Customer.belongsTo(Area, { foreignKey: 'area_id' });
 
-export default Agent;
+export default Customer;

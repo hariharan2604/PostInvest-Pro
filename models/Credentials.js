@@ -1,11 +1,11 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../db/connection.js';
 import { v4 as uuidv4 } from 'uuid';
-import Customer from './Customer.js'
+import Agent from './Agent.js';
 
-class Agent extends Model { }
+class Credentials extends Model { }
 
-Agent.init(
+Credentials.init(
     {
         id: {
             type: DataTypes.UUID,
@@ -13,44 +13,15 @@ Agent.init(
             primaryKey: true,
             allowNull: false,
         },
-        name: {
+        username: {
             type: DataTypes.STRING,
             allowNull: false,
-        },
-        dob: {
-            type: DataTypes.DATE,
-            allowNull: false,
-        },
-        gender: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        mobile: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            unique: true,
-        },
-        email: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            unique: true,
-            validate: {
-                isEmail: true,
-            },
         },
         password: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        address1: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        address2: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
-        area_id: {
+        agent_id: {
             type: DataTypes.UUID,
             allowNull: false,
         },
@@ -67,9 +38,10 @@ Agent.init(
     },
     {
         sequelize,
-        modelName: 'Agent',
+        modelName: 'Credentials',
     }
 );
 
+Credentials.belongsTo(Agent, { foreignKey: 'agent_id' });
 
-export default Agent;
+export default Credentials;
