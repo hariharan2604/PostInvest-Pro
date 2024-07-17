@@ -3,11 +3,13 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { createApiResponse } from '../utilities/httpResponse.js';
 import { Op } from 'sequelize';
-
+import Credentials from '../models/Credentials.js';
+import { dateObj } from '../utilities/dateFormatter.js';
 class Auth {
     async register(req, res) {
         try {
-            const { username, password, mobile, email, gender, dob, address, area, state, zip } = req.body;
+            const { name, password, mobile, email, gender, dob, address1, address2, area, state, city, zip } = req.body;
+            console.log(new Date(dob));
             const existingUser = await Agent.findAll({
                 where: {
                     [Op.or]: [{
@@ -20,23 +22,29 @@ class Auth {
                     }]
                 }
             });
-            if (existingUser.rows != 0) {
+            if (existingUser.length != 0) {
                 let data = { message: 'Mobile or Email already Exists' }
                 res.json(createApiResponse(data, 200));
             }
             else {
                 const hashedPassword = await bcrypt.hash(password, 10);
-                await Agent.create({
-                    username,
-                    password: hashedPassword,
+                const agent = await Agent.create({
+                    name,
                     mobile,
                     email,
                     gender,
-                    dob: Date(dob), // Ensure dob is converted to Date object
-                    address,
+                    dob: dateObj(dob),
+                    address1,
+                    address2,
                     area,
+                    city,
                     state,
                     zip
+                });
+                await Credentials.create({
+                    username: agent.mobile,
+                    password: hashedPassword,
+                    agent_id: agent.id
                 });
                 let data = { message: 'User Registration successful' };
                 res.json(createApiResponse(data, 200));
@@ -50,7 +58,7 @@ class Auth {
     async login(req, res) {
         try {
             const { username, password } = req.body;
-            const user = await Agent.findOne({ where: { username } });
+            const user = await Credentials.findOne({ where: { username } });
             if (!user) {
                 let data = { message: 'Authentication failed' }
                 return res.json(createApiResponse(data, 400));

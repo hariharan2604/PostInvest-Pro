@@ -33,10 +33,6 @@ module.exports = {
           isEmail: true,
         },
       },
-      password: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
       address1: {
         type: Sequelize.STRING,
         allowNull: false,
@@ -61,12 +57,12 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      created_at: {
+      createdAt: {
         type: Sequelize.DATE,
         allowNull: false,
         defaultValue: Sequelize.NOW,
       },
-      updated_at: {
+      updatedAt: {
         type: Sequelize.DATE,
         allowNull: false,
         defaultValue: Sequelize.NOW,

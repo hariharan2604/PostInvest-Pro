@@ -12,7 +12,7 @@ module.exports = {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
-          model: 'Investment', // name of the target model (Agent)
+          model: 'Investment', // name of the target model (Agents)
           key: 'id',
         },
         onUpdate: 'CASCADE',
@@ -30,12 +30,12 @@ module.exports = {
         type: Sequelize.DATE,
         allowNull: false,
       },
-      created_at: {
+      createdAt: {
         type: Sequelize.DATE,
         allowNull: false,
         defaultValue: Sequelize.NOW,
       },
-      updated_at: {
+      updatedAt: {
         type: Sequelize.DATE,
         allowNull: false,
         defaultValue: Sequelize.NOW,

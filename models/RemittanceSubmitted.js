@@ -51,16 +51,7 @@ RemittanceSubmitted.init(
             type: DataTypes.STRING,
             allowNull: true,
         },
-        created_at: {
-            type: DataTypes.DATE,
-            allowNull: false,
-            defaultValue: DataTypes.NOW,
-        },
-        updated_at: {
-            type: DataTypes.DATE,
-            allowNull: false,
-            defaultValue: DataTypes.NOW,
-        },
+
     },
     {
         sequelize,
@@ -68,8 +59,8 @@ RemittanceSubmitted.init(
     }
 );
 
-RemittanceSubmitted.belongsTo(RemittanceProcess, { foreignKey:'remittance_process_id'})
-RemittanceSubmitted.belongsTo(ProcessCalendar, { foreignKey:'process_calendar_id'})
-RemittanceSubmitted.belongsTo(ReceiptType, { foreignKey:'receipt_type_id'})
+RemittanceSubmitted.belongsTo(RemittanceProcess, { foreignKey: 'remittance_process_id' })
+RemittanceSubmitted.belongsTo(ProcessCalendar, { foreignKey: 'process_calendar_id' })
+RemittanceSubmitted.belongsTo(ReceiptType, { foreignKey: 'receipt_type_id' })
 
 export default RemittanceSubmitted;

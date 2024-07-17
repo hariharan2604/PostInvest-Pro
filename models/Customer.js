@@ -16,7 +16,7 @@ Customer.init(
         },
         cif: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
         },
         name: {
             type: DataTypes.STRING,
@@ -75,16 +75,7 @@ Customer.init(
             type: DataTypes.UUID,
             allowNull: false,
         },
-        created_at: {
-            type: DataTypes.DATE,
-            allowNull: false,
-            defaultValue: DataTypes.NOW,
-        },
-        updated_at: {
-            type: DataTypes.DATE,
-            allowNull: false,
-            defaultValue: DataTypes.NOW,
-        },
+
     },
     {
         sequelize,

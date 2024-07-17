@@ -74,16 +74,7 @@ RemittanceProcessDetail.init(
             type: DataTypes.STRING,
             allowNull: true,
         },
-        created_at: {
-            type: DataTypes.DATE,
-            allowNull: false,
-            defaultValue: DataTypes.NOW,
-        },
-        updated_at: {
-            type: DataTypes.DATE,
-            allowNull: false,
-            defaultValue: DataTypes.NOW,
-        },
+
     },
     {
         sequelize,
