@@ -55,7 +55,7 @@ module.exports = {
         onDelete: 'CASCADE'
       },
       instrument_class_id: {
-        type: Sequelize.STRING,
+        type: Sequelize.UUID,
         allowNull: false,
         references: {
           model: 'InstrumentClass', // name of the target model (Agent)
