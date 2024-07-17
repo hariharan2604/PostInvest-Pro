@@ -19,6 +19,12 @@ module.exports = {
       agent_id: {
         type: Sequelize.UUID,
         allowNull: false,
+        references: {
+          model: 'Agent', // name of the target model (Agent)
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       created_at: {
         type: Sequelize.DATE,

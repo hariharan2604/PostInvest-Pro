@@ -11,10 +11,22 @@ module.exports = {
       investment_id: {
         type: Sequelize.UUID,
         allowNull: false,
+        references: {
+          model: 'Investment', // name of the target model (Agent)
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       receipt_collection_id: {
         type: Sequelize.UUID,
         allowNull: false,
+        references: {
+          model: 'ReceiptCollection', // name of the target model (Agent)
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       remittance_amount: {
         type: Sequelize.FLOAT,

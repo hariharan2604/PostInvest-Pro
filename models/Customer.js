@@ -93,6 +93,5 @@ Customer.init(
 );
 
 Customer.belongsTo(Agent, { foreignKey: 'agent_id' });
-// Customer.belongsTo(Area, { foreignKey: 'area_id' });
 
 export default Customer;
