@@ -2,6 +2,7 @@ import { DataTypes, Model } from 'sequelize';
 import sequelize from '../db/connection.js';
 import { v4 as uuidv4 } from 'uuid';
 import ReceiptType from './ReceiptType.js';
+import InstrumentClass from './InstrumentClass.js';
 
 class ReceiptCollection extends Model { }
 
@@ -41,8 +42,8 @@ ReceiptCollection.init(
             type: DataTypes.UUID,
             allowNull: true,
         },
-        instrument_class: {
-            type: DataTypes.STRING,
+        instrument_class_id: {
+            type: DataTypes.UUID,
             allowNull: false,
         },
         sb_acc_number: {
@@ -69,5 +70,6 @@ ReceiptCollection.init(
 ReceiptCollection.belongsTo(Customer, { foreignKey: 'customer_id' });
 ReceiptCollection.belongsTo(BankDetail, { foreignKey: 'bank_id' });
 ReceiptCollection.belongsTo(ReceiptType, { foreignKey: 'receipt_type_id' });
+ReceiptCollection.belongsTo(InstrumentClass, { foreignKey: 'instrument_class_id' });
 
 export default ReceiptCollection;

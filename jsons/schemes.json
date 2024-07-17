@@ -1,0 +1,38 @@
+[
+    {
+        "scheme_code": "SB",
+        "scheme_name": "Post Office Savings Account"
+    },
+    {
+        "scheme_code": "RD",
+        "scheme_name": "National Savings Recurring Deposit Account"
+    },
+    {
+        "scheme_code": "TD",
+        "scheme_name": "National Savings Time Deposit Account"
+    },
+    {
+        "scheme_code": "MIS",
+        "scheme_name": "National Savings Monthly Income Account"
+    },
+    {
+        "scheme_code": "SCSS",
+        "scheme_name": "Senior Citizens Savings Scheme Account"
+    },
+    {
+        "scheme_code": "PPF",
+        "scheme_name": "Public Provident Fund Account"
+    },
+    {
+        "scheme_code": "SSA",
+        "scheme_name": "Sukanya Samriddhi Account"
+    },
+    {
+        "scheme_code": "NSC",
+        "scheme_name": "National Savings Certificates (VIIIth Issue)"
+    },
+    {
+        "scheme_code": "KVP",
+        "scheme_name": "Kisan Vikas Patra"
+    }
+]
