@@ -11,6 +11,12 @@ module.exports = {
       process_calendar_id: {
         type: Sequelize.UUID,
         allowNull: false,
+        references: {
+          model: 'ProcessCalendar', // name of the target model (Agent)
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       lot: {
         type: Sequelize.INTEGER,
@@ -27,6 +33,12 @@ module.exports = {
       remittance_process_status: {
         type: Sequelize.UUID,
         allowNull: false,
+        references: {
+          model: 'RemittanceProcessStatus', // name of the target model (Agent)
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       dc_number: {
         type: Sequelize.STRING,

@@ -11,6 +11,12 @@ module.exports = {
       customer_id: {
         type: Sequelize.UUID,
         allowNull: false,
+        references: {
+          model: 'Customer', // name of the target model (Agent)
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       investment_acc_no: {
         type: Sequelize.STRING,
@@ -19,6 +25,12 @@ module.exports = {
       scheme_id: {
         type: Sequelize.UUID,
         allowNull: false,
+        references: {
+          model: 'SchemeDetail', // name of the target model (Agent)
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       investment_amount: {
         type: Sequelize.FLOAT,
@@ -43,6 +55,12 @@ module.exports = {
       status_id: {
         type: Sequelize.UUID,
         allowNull: false,
+        references: {
+          model: 'InvestmentStatus', // name of the target model (Agent)
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       created_at: {
         type: Sequelize.DATE,

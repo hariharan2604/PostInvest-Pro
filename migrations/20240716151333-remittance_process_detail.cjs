@@ -11,30 +11,72 @@ module.exports = {
       remittance_process_id: {
         type: Sequelize.UUID,
         allowNull: false,
+        references: {
+          model: 'RemittanceProcess', // name of the target model (Agent)
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       process_calendar_id: {
         type: Sequelize.UUID,
         allowNull: false,
+        references: {
+          model: 'ProcessCalendar', // name of the target model (Agent)
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       customer_id: {
         type: Sequelize.UUID,
         allowNull: false,
+        references: {
+          model: 'Customer', // name of the target model (Agent)
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       investment_id: {
         type: Sequelize.UUID,
         allowNull: false,
+        references: {
+          model: 'Investment', // name of the target model (Agent)
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       receipt_detail_id: {
         type: Sequelize.UUID,
         allowNull: false,
+        references: {
+          model: 'ReceiptDetail', // name of the target model (Agent)
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       receipt_type_id: {
         type: Sequelize.UUID,
         allowNull: false,
+        references: {
+          model: 'ReceiptType', // name of the target model (Agent)
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       receipt_collection_id: {
         type: Sequelize.UUID,
         allowNull: false,
+        references: {
+          model: 'ReceiptCollection', // name of the target model (Agent)
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       remittance_amount: {
         type: Sequelize.FLOAT,

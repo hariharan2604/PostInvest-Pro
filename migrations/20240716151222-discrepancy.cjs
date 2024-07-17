@@ -15,10 +15,22 @@ module.exports = {
       remittance_process_id: {
         type: Sequelize.UUID,
         allowNull: false,
+        references: {
+          model: 'RemittanceProcess', // name of the target model (Agent)
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       process_calendar_id: {
         type: Sequelize.UUID,
         allowNull: false,
+        references: {
+          model: 'ProcessCalendar', // name of the target model (Agent)
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       customer_id: {
         type: Sequelize.UUID,

@@ -11,14 +11,32 @@ module.exports = {
       remittance_process_id: {
         type: Sequelize.UUID,
         allowNull: false,
+        references: {
+          model: 'RemittanceProcess', // name of the target model (Agent)
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       process_calendar_id: {
         type: Sequelize.UUID,
         allowNull: false,
+        references: {
+          model: 'ProcessCalendar', // name of the target model (Agent)
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       receipt_type_id: {
         type: Sequelize.UUID,
         allowNull: false,
+        references: {
+          model: 'ReceiptType', // name of the target model (Agent)
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       no_of_installments: {
         type: Sequelize.INTEGER,

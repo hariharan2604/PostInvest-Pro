@@ -11,6 +11,12 @@ module.exports = {
       receipt_type_id: {
         type: Sequelize.UUID,
         allowNull: false,
+        references: {
+          model: 'ReceiptType', // name of the target model (Agent)
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       receipt_date: {
         type: Sequelize.DATE,
@@ -19,6 +25,12 @@ module.exports = {
       customer_id: {
         type: Sequelize.UUID,
         allowNull: false,
+        references: {
+          model: 'Customer', // name of the target model (Agent)
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       receipt_amount: {
         type: Sequelize.FLOAT,
@@ -35,10 +47,22 @@ module.exports = {
       bank_id: {
         type: Sequelize.UUID,
         allowNull: true,
+        references: {
+          model: 'BankDetail', // name of the target model (Agent)
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
-      instrument_class: {
+      instrument_class_id: {
         type: Sequelize.STRING,
         allowNull: false,
+        references: {
+          model: 'InstrumentClass', // name of the target model (Agent)
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       sb_acc_number: {
         type: Sequelize.STRING,
