@@ -16,7 +16,7 @@ module.exports = {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
-          model: 'RemittanceProcess', // name of the target model (Agent)
+          model: 'RemittanceProcess', // name of the target model (Agents)
           key: 'id',
         },
         onUpdate: 'CASCADE',
@@ -26,7 +26,7 @@ module.exports = {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
-          model: 'ProcessCalendar', // name of the target model (Agent)
+          model: 'ProcessCalendar', // name of the target model (Agents)
           key: 'id',
         },
         onUpdate: 'CASCADE',
@@ -64,12 +64,12 @@ module.exports = {
         type: Sequelize.DATE,
         allowNull: true,
       },
-      created_at: {
+      createdAt: {
         type: Sequelize.DATE,
         allowNull: false,
         defaultValue: Sequelize.NOW,
       },
-      updated_at: {
+      updatedAt: {
         type: Sequelize.DATE,
         allowNull: false,
         defaultValue: Sequelize.NOW,

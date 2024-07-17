@@ -10,7 +10,7 @@ RemittanceProcess.init(
     {
         id: {
             type: DataTypes.UUID,
-            defaultValue:uuidv4,
+            defaultValue: uuidv4,
             primaryKey: true,
             allowNull: false,
         },
@@ -38,16 +38,7 @@ RemittanceProcess.init(
             type: DataTypes.STRING,
             allowNull: true,
         },
-        created_at: {
-            type: DataTypes.DATE,
-            allowNull: false,
-            defaultValue: DataTypes.NOW,
-        },
-        updated_at: {
-            type: DataTypes.DATE,
-            allowNull: false,
-            defaultValue: DataTypes.NOW,
-        },
+
     },
     {
         sequelize,
