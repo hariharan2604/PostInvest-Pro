@@ -1,11 +1,11 @@
-import Agent from '../models/Agent.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { createApiResponse } from '../utilities/httpResponse.js';
 import { Op } from 'sequelize';
-import Credentials from '../models/Credentials.js';
+import { createApiResponse } from '../utilities/httpResponse.js';
 import { dateObj } from '../utilities/dateFormatter.js';
-class Auth {
+import Agent from '../models/Agent.js';
+import Credentials from '../models/Credentials.js';
+export default class Auth {
     async register(req, res) {
         try {
             const { name, password, mobile, email, gender, dob, address1, address2, area, state, city, zip } = req.body;
@@ -79,5 +79,3 @@ class Auth {
         }
     }
 }
-
-export { Auth }

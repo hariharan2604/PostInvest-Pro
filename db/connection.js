@@ -2,12 +2,7 @@ import dotenv from 'dotenv';
 import { Sequelize } from 'sequelize';
 
 dotenv.config();
-const opts = {
-    define: {
-        //prevent sequelize from pluralizing table names
-        freezeTableName: true
-    }
-}
+
 const sequelize = new Sequelize({
     dialect: process.env.DB,
     host: process.env.DB_HOST,
@@ -17,7 +12,6 @@ const sequelize = new Sequelize({
     define: {
         freezeTableName: true
     },
-    // logging:false
 });
 
 export default sequelize;
