@@ -2,8 +2,7 @@ import { DataTypes, Model } from 'sequelize';
 import sequelize from '../db/connection.js';
 import { v4 as uuidv4 } from 'uuid';
 import Agent from './Agent.js';
-import Area from './Area.js';
-
+// import CustomerRelationship from './CustomerRelationShip.js';
 class Customer extends Model { }
 
 Customer.init(
@@ -17,6 +16,7 @@ Customer.init(
         cif: {
             type: DataTypes.STRING,
             allowNull: true,
+            unique:true
         },
         name: {
             type: DataTypes.STRING,
@@ -33,12 +33,10 @@ Customer.init(
         mobile: {
             type: DataTypes.STRING,
             allowNull: false,
-            unique: true,
         },
         email: {
             type: DataTypes.STRING,
             allowNull: false,
-            unique: true,
             validate: {
                 isEmail: true,
             },
@@ -67,10 +65,6 @@ Customer.init(
             type: DataTypes.INTEGER,
             allowNull: false,
         },
-        relation: {
-            type: DataTypes.JSON,
-            allowNull: true,
-        },
         agent_id: {
             type: DataTypes.UUID,
             allowNull: false,
@@ -84,5 +78,12 @@ Customer.init(
 );
 
 Customer.belongsTo(Agent, { foreignKey: 'agent_id' });
+
+// Customer.belongsToMany(Customer, {
+//     through: CustomerRelationship,
+//     foreignKey: 'customerId',
+//     as: 'relatedCustomers',
+//     otherKey: 'relatedCustomerId',
+// });
 
 export default Customer;

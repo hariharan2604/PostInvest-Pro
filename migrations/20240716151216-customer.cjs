@@ -10,7 +10,8 @@ module.exports = {
       },
       cif: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
+        unique:true
       },
       name: {
         type: Sequelize.STRING,
@@ -27,12 +28,10 @@ module.exports = {
       mobile: {
         type: Sequelize.STRING,
         allowNull: false,
-        unique: true,
       },
       email: {
         type: Sequelize.STRING,
         allowNull: false,
-        unique: true,
         validate: {
           isEmail: true,
         },
@@ -60,10 +59,6 @@ module.exports = {
       zip: {
         type: Sequelize.INTEGER,
         allowNull: false,
-      },
-      relation: {
-        type: Sequelize.JSON,
-        allowNull: true,
       },
       agent_id: {
         type: Sequelize.UUID,
