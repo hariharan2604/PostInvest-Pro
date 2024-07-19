@@ -1,16 +1,20 @@
 import { DataTypes, Model } from 'sequelize';
-import sequelize from '../db/connection.js';
+import sequelize from '../../db/connection.js';
 import { v4 as uuidv4 } from 'uuid';
+class Customer extends Model { }
 
-class Agent extends Model { }
-
-Agent.init(
+Customer.init(
     {
         id: {
             type: DataTypes.UUID,
             defaultValue: uuidv4,
             primaryKey: true,
             allowNull: false,
+        },
+        cif: {
+            type: DataTypes.STRING,
+            allowNull: true,
+            unique: true
         },
         name: {
             type: DataTypes.STRING,
@@ -27,12 +31,10 @@ Agent.init(
         mobile: {
             type: DataTypes.STRING,
             allowNull: false,
-            unique: true,
         },
         email: {
             type: DataTypes.STRING,
             allowNull: false,
-            unique: true,
             validate: {
                 isEmail: true,
             },
@@ -61,12 +63,17 @@ Agent.init(
             type: DataTypes.INTEGER,
             allowNull: false,
         },
+        agent_id: {
+            type: DataTypes.UUID,
+            allowNull: false,
+        },
+
     },
     {
         sequelize,
-        modelName: 'Agent',
+        modelName: 'Customer',
     }
 );
 
 
-export default Agent;
+export default Customer;

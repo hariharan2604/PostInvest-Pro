@@ -1,22 +1,16 @@
 import { DataTypes, Model } from 'sequelize';
-import sequelize from '../db/connection.js';
+import sequelize from '../../db/connection.js';
 import { v4 as uuidv4 } from 'uuid';
-import Agent from './Agent.js';
-// import CustomerRelationship from './CustomerRelationShip.js';
-class Customer extends Model { }
 
-Customer.init(
+class Agent extends Model { }
+
+Agent.init(
     {
         id: {
             type: DataTypes.UUID,
             defaultValue: uuidv4,
             primaryKey: true,
             allowNull: false,
-        },
-        cif: {
-            type: DataTypes.STRING,
-            allowNull: true,
-            unique:true
         },
         name: {
             type: DataTypes.STRING,
@@ -33,10 +27,12 @@ Customer.init(
         mobile: {
             type: DataTypes.STRING,
             allowNull: false,
+            unique: true,
         },
         email: {
             type: DataTypes.STRING,
             allowNull: false,
+            unique: true,
             validate: {
                 isEmail: true,
             },
@@ -65,25 +61,12 @@ Customer.init(
             type: DataTypes.INTEGER,
             allowNull: false,
         },
-        agent_id: {
-            type: DataTypes.UUID,
-            allowNull: false,
-        },
-
     },
     {
         sequelize,
-        modelName: 'Customer',
+        modelName: 'Agent',
     }
 );
 
-Customer.belongsTo(Agent, { foreignKey: 'agent_id' });
 
-// Customer.belongsToMany(Customer, {
-//     through: CustomerRelationship,
-//     foreignKey: 'customerId',
-//     as: 'relatedCustomers',
-//     otherKey: 'relatedCustomerId',
-// });
-
-export default Customer;
+export default Agent;

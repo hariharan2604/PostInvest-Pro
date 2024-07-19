@@ -7,15 +7,21 @@ module.exports = {
     const investment_status = [
       {
         id: uuidv4(),
-        investment_status_name:"open"
+        investment_status_name: "open",
+        createdAt: new Date(),
+        updatedAt: new Date()
       },
       {
         id: uuidv4(),
-        investment_status_name:"preclosed"
+        investment_status_name: "preclosed",
+        createdAt: new Date(),
+        updatedAt: new Date()
       },
       {
         id: uuidv4(),
-        investment_status_name:"closed"
+        investment_status_name: "closed",
+        createdAt: new Date(),
+        updatedAt: new Date()
       }
     ]
     await queryInterface.bulkInsert('InvestmentStatus', investment_status, {});

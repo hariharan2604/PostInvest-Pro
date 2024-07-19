@@ -7,11 +7,15 @@ module.exports = {
     const receipt_type = [
       {
         id: uuidv4(),
-        instrument_class_name: "dop"
+        instrument_class_name: "dop",
+        createdAt: new Date(),
+        updatedAt: new Date()
       },
       {
         id: uuidv4(),
-        instrument_class_name: "others"
+        instrument_class_name: "others",
+        createdAt: new Date(),
+        updatedAt: new Date()
       }
     ]
     await queryInterface.bulkInsert('InstrumentClass', receipt_type, {});

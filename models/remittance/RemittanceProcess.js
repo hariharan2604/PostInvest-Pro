@@ -1,8 +1,7 @@
 import { DataTypes, Model } from 'sequelize';
-import sequelize from '../db/connection.js';
+import sequelize from '../../db/connection.js';
 import { v4 as uuidv4 } from 'uuid';
-import RemittanceProcessStatus from './RemittanceProcessStatus.js';
-import ProcessCalendar from './ProcessCalendar.js';
+
 
 class RemittanceProcess extends Model { }
 
@@ -46,7 +45,7 @@ RemittanceProcess.init(
     }
 );
 
-RemittanceProcess.belongsTo(RemittanceProcessStatus, { foreignKey: 'remittance_process_status' });
-RemittanceProcess.belongsTo(ProcessCalendar, { foreignKey: 'process_calendar_id' });
+// RemittanceProcess.belongsTo(RemittanceProcessStatus, { foreignKey: 'remittance_process_status' });
+// RemittanceProcess.belongsTo(ProcessCalendar, { foreignKey: 'process_calendar_id' });
 
 export default RemittanceProcess;

@@ -20,7 +20,7 @@ function verifyToken(req, res, next) {
         next();
     } catch (error) {
         let data = { message: 'Token Expired', errmsg: error }
-        res.json(createApiResponse(data,500));
+        return res.json(createApiResponse(data,500));
     }
 }
 

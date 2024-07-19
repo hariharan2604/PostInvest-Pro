@@ -1,7 +1,6 @@
 import { DataTypes, Model } from 'sequelize';
-import sequelize from '../db/connection.js';
+import sequelize from '../../db/connection.js';
 import { v4 as uuidv4 } from 'uuid';
-import Agent from './Agent.js';
 
 class Credentials extends Model { }
 
@@ -33,6 +32,5 @@ Credentials.init(
     }
 );
 
-Credentials.belongsTo(Agent, { foreignKey: 'agent_id' });
 
 export default Credentials;

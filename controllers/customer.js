@@ -1,11 +1,9 @@
-// import Customer from '../models/Customer.js';
 import { Op } from 'sequelize';
 import { createApiResponse } from '../utilities/httpResponse.js';
 import { dateObj } from '../utilities/dateFormatter.js'
-import '../models/Association.js';
-import Customer from '../models/Customer.js';
-import CustomerRelationship from '../models/CustomerRelationship.js';
 import { arrayDifference } from '../utilities/arrayDifference.js';
+import { Customer, CustomerRelationship, Investment } from '../models/customer/CustomerAssociation.js';
+import SchemeDetail from '../models/investment/SchemeDetail.js';
 
 export default class Customer_controller {
     async createCustomer(req, res) {
@@ -42,37 +40,14 @@ export default class Customer_controller {
                 cif: null,
             });
 
-            if (relations.length > 0) {
-                relations.forEach(async (relation) => {
-                    await CustomerRelationship.findOrCreate({
-                        where: {
-                            customerId: createdCustomer.id,
-                            relatedCustomerId: relation
-                        },
-                        defaults: {
-                            customerId: createdCustomer.id,
-                            relatedCustomerId: relation
-                        }
-                    });
-                    await CustomerRelationship.findOrCreate({
-                        where: {
-                            relatedCustomerId: createdCustomer.id,
-                            customerId: relation
-                        },
-                        defaults: {
-                            relatedCustomerId: createdCustomer.id,
-                            customerId: relation
-                        }
-                    });
-                });
-            }
+            Customer_controller.updateRelations(relations.length > 0 ? relations : null, createdCustomer);
 
-            let data = { message: 'Customer Creation successfull' }
-            res.json(createApiResponse(data, 200));
+            let data = { message: 'Customer Creation successfull', createdCustomer }
+            return res.json(createApiResponse(data, 200));
         } catch (error) {
             console.log('error :42', error);
             let data = { message: 'Customer Creation failed', errmsg: error }
-            res.json(createApiResponse(data, 500));
+            return res.json(createApiResponse(data, 500));
         }
     }
 
@@ -96,7 +71,6 @@ export default class Customer_controller {
                 relations
             } = req.body;
 
-            // const existingCustomer = await Customer.findByPk(id);
             const existingCustomer = await Customer.findByPk(id, {
                 include: [
                     {
@@ -110,49 +84,11 @@ export default class Customer_controller {
             });
             let oldRelations = existingCustomer.relatedCustomers;
             oldRelations = oldRelations.map(item => item.id);
-            console.log("old:",oldRelations);
-            console.log("new:",relations);
+
             const relationsToRemove = arrayDifference(oldRelations, relations);
-            if (relationsToRemove.length > 0) {
-                relationsToRemove.forEach(async (relationtoremove) => {
-                    await CustomerRelationship.destroy({
-                        where: {
-                            customerId: existingCustomer.id,
-                            relatedCustomerId: relationtoremove
-                        },
-                    });
-                    await CustomerRelationship.destroy({
-                        where: {
-                            customerId: relationtoremove,
-                            relatedCustomerId: existingCustomer.id
-                        },
-                    });
-                });
-            }
-            if (relations.length > 0) {
-                relations.forEach(async (relation) => {
-                    await CustomerRelationship.findOrCreate({
-                        where: {
-                            customerId: existingCustomer.id,
-                            relatedCustomerId: relation
-                        },
-                        defaults: {
-                            customerId: existingCustomer.id,
-                            relatedCustomerId: relation
-                        }
-                    });
-                    await CustomerRelationship.findOrCreate({
-                        where: {
-                            relatedCustomerId: existingCustomer.id,
-                            customerId: relation
-                        },
-                        defaults: {
-                            relatedCustomerId: existingCustomer.id,
-                            customerId: relation
-                        }
-                    });
-                });
-            }
+
+            Customer_controller.updateRelations(relations.length > 0 ? relations : null, existingCustomer, relationsToRemove.length > 0 ? relationsToRemove : null)
+
             if (existingCustomer) {
                 await existingCustomer.update({
                     name,
@@ -171,16 +107,16 @@ export default class Customer_controller {
                 });
 
                 let data = { message: 'Customer Updation successfull' }
-                res.json(createApiResponse(data, 200));
+                return res.json(createApiResponse(data, 200));
             }
             else {
                 let data = { message: 'Customer Not found' }
-                res.json(createApiResponse(data, 400));
+                return res.json(createApiResponse(data, 400));
             }
         } catch (error) {
             console.log('error :101', error);
             let data = { message: 'Customer Updation failed', errmsg: error }
-            res.json(createApiResponse(data, 500));
+            return res.json(createApiResponse(data, 500));
         }
     }
 
@@ -204,43 +140,110 @@ export default class Customer_controller {
                 };
             }
             const { count, rows } = await Customer.findAndCountAll({ attributes: ['id', 'name'], where: whereData });
-
+            
             if (count > 0) {
-                res.json(createApiResponse({ count, customers: rows }, 200));
+                const customers = rows.map(row => row.toJSON());
+                return res.json(createApiResponse({ count, customers }, 200));
             }
             else {
-                res.json(createApiResponse({ count }, 400));
+                return res.json(createApiResponse({ count }, 400));
             }
         } catch (error) {
             console.log('error :135', error);
             let data = { message: 'Error getting Customer List', errmsg: error }
-            res.json(createApiResponse(data, 500));
+            return res.json(createApiResponse(data, 500));
         }
     }
 
     async getCustomerDetails(req, res) {
         try {
             const { customerId } = req.body;
-            const customer = await Customer.findByPk(customerId, {
+            const rows = await Customer.findByPk(customerId, {
                 include: [
                     {
                         model: Customer,
                         as: 'relatedCustomers',
-                        through: { attributes:[]},
+                        through: { attributes: [] },
                         attributes: ['id', 'name']
 
                     },
+                    {
+                        model: Investment,
+                        attributes: ['id', 'investment_acc_no','installment_amount','scheme_id']
+                    }
                 ],
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt'],
+                },
             });
-            if (customer)
-                res.json(createApiResponse({ customer }, 200));
+            if (rows) {
+                const customers = rows.toJSON();
+                for (const relation of customers.relatedCustomers) {
+                    const details = await Customer.findByPk(relation.id, {
+                        include: {
+                            model: Investment,
+                        }
+                    });
+                    relation.investment_count = details ? details.Investments.length : 0;
+                }
+                for (const investment of customers.Investments) {
+                    const status = await SchemeDetail.findByPk(investment.scheme_id);
+                    delete investment.scheme_id
+                    investment.scheme_code = status.scheme_code;
+                }
+                return res.json(createApiResponse(customers, 200));
+            }
             else {
                 let data = { message: 'Customer Not found' }
-                res.json(createApiResponse(data, 400));
+                return res.json(createApiResponse(data, 400));
             }
         } catch (error) {
+            console.log('error :207', error);
             let data = { message: 'Error getting Customer Detail', errmsg: error }
-            res.json(createApiResponse(data, 500));
+            return res.json(createApiResponse(data, 500));
+        }
+    }
+
+    static async updateRelations(relations = null, Customer, relationsToRemove = null) {
+        if (relations.length > 0) {
+            relations.forEach(async (relation) => {
+                await CustomerRelationship.findOrCreate({
+                    where: {
+                        customerId: Customer.id,
+                        relatedCustomerId: relation
+                    },
+                    defaults: {
+                        customerId: Customer.id,
+                        relatedCustomerId: relation
+                    }
+                });
+                await CustomerRelationship.findOrCreate({
+                    where: {
+                        relatedCustomerId: Customer.id,
+                        customerId: relation
+                    },
+                    defaults: {
+                        relatedCustomerId: Customer.id,
+                        customerId: relation
+                    }
+                });
+            });
+        }
+        if (relationsToRemove) {
+            relationsToRemove.forEach(async (relationtoremove) => {
+                await CustomerRelationship.destroy({
+                    where: {
+                        customerId: Customer.id,
+                        relatedCustomerId: relationtoremove
+                    },
+                });
+                await CustomerRelationship.destroy({
+                    where: {
+                        customerId: relationtoremove,
+                        relatedCustomerId: Customer.id
+                    },
+                });
+            });
         }
     }
 }
