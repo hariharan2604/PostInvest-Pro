@@ -1,7 +1,6 @@
 import { DataTypes, Model } from 'sequelize';
-import sequelize from '../db/connection.js';
+import sequelize from '../../db/connection.js';
 import { v4 as uuidv4 } from 'uuid';
-import Investment from './Investment.js';
 
 class InvestmentDetail extends Model { }
 
@@ -37,5 +36,4 @@ InvestmentDetail.init(
     }
 );
 
-InvestmentDetail.belongsTo(Investment, { foreignKey: 'investment_id' });
 export default InvestmentDetail;

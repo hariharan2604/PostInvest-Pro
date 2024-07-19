@@ -1,25 +1,26 @@
 import { DataTypes, Model } from 'sequelize';
-import sequelize from '../db/connection.js';
-import { v4 as uuidv4 } from 'uuid'
-class ReceiptType extends Model { }
+import sequelize from '../../db/connection.js';
+import { v4 as uuidv4 } from 'uuid';
 
-ReceiptType.init(
+class InvestmentStatus extends Model { }
+
+InvestmentStatus.init(
     {
         id: {
             type: DataTypes.UUID,
-            defaultValue: uuidv4,
             primaryKey: true,
+            defaultValue: uuidv4,
             allowNull: false,
         },
-        receipt_type_name: {
+        investment_status_name: {
             type: DataTypes.STRING,
             allowNull: false,
         },
     },
     {
         sequelize,
-        modelName: 'ReceiptType',
+        modelName: 'InvestmentStatus',
     }
 );
 
-export default ReceiptType;
+export default InvestmentStatus;

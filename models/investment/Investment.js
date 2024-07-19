@@ -1,10 +1,6 @@
 import { DataTypes, Model } from 'sequelize';
-import sequelize from '../db/connection.js';
+import sequelize from '../../db/connection.js';
 import { v4 as uuidv4 } from 'uuid';
-import Customer from './Customer.js';
-import SchemeDetail from './SchemeDetail.js';
-import InvestmentStatus from './InvestmentStatus.js';
-import InvestmentDetail from './InvestmentDetail.js';
 
 class Investment extends Model { }
 
@@ -60,8 +56,5 @@ Investment.init(
     }
 );
 
-Investment.belongsTo(Customer, { foreignKey: 'customer_id' });
-Investment.belongsTo(SchemeDetail, { foreignKey: 'scheme_id' });
-Investment.belongsTo(InvestmentStatus, { foreignKey: 'status_id' });
 
 export default Investment;

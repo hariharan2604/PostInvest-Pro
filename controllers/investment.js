@@ -1,0 +1,115 @@
+import { Op } from 'sequelize';
+import { createApiResponse } from '../utilities/httpResponse.js';
+import { dateObj } from '../utilities/dateFormatter.js'
+import { Investment, InvestmentStatus, SchemeDetail, InvestmentDetail } from '../models/investment/InvestmentAssociation.js';
+export default class Investment_Controller {
+    async addInvestment(req, res) {
+        try {
+            const {
+                customer_id,
+                investment_acc_no,
+                scheme_id,
+                investment_amount,
+                tenure,
+                installment_amount,
+                investment_date,
+                next_installment_due,
+                status_id
+            } = req.body;
+            const existingInvestment = await Investment.findAll({
+                where: { investment_acc_no: investment_acc_no },
+            });
+            if (existingInvestment.length > 0) {
+                let data = { message: 'Investment Account number Already Exists' }
+                return res.json(createApiResponse(data, 400));
+            }
+            else {
+                const createdInvestment = await Investment.create({
+                    customer_id,
+                    investment_acc_no,
+                    scheme_id,
+                    investment_amount,
+                    tenure,
+                    installment_amount,
+                    investment_date: dateObj(investment_date),
+                    next_installment_due: dateObj(next_installment_due),
+                    status_id
+                });
+                let data = { message: 'Investment Created', createdInvestment }
+                return res.json(createApiResponse(data, 201));
+            }
+        } catch (error) {
+            console.log('error :39', error);
+            let data = { message: 'Investment Creation failed', errmsg: error }
+            return res.json(createApiResponse(data, 500));
+        }
+    }
+    async getInvestmentDetail(req, res) {
+        try {
+            const { investment_id } = req.body;
+            const { count, rows } = await Investment.findAndCountAll({
+                where: {
+                    id: investment_id
+                },
+                attributes: { exclude: ['createdAt', 'updatedAt'] },
+                include:
+                {
+                    model: InvestmentDetail,
+                },
+            });
+            if (count > 0) {
+                const investment_detail = rows.map(row => row.toJSON());
+                return res.json(createApiResponse({ count, investment_detail }, 200));
+            }
+            else {
+                return res.json(createApiResponse({ count }, 400));
+            }
+        } catch (error) {
+            console.log('error :66', error);
+            let data = { message: 'Error Fetching Investment Detail', errmsg: error }
+            return res.json(createApiResponse(data, 500));
+        }
+    }
+    async getInvestment(req, res) {
+        try {
+            const { customer_id, investment_acc_no } = req.body;
+            let whereData = {};
+            if (customer_id) {
+                whereData.customer_id = {
+                    [Op.eq]: customer_id
+                }
+            }
+            if (investment_acc_no) {
+                whereData.investment_acc_no = {
+                    [Op.eq]: investment_acc_no
+                }
+            }
+
+            const { count, rows } = await Investment.findAndCountAll({
+                where: whereData,
+                attributes: { exclude: ['createdAt', 'updatedAt', 'status_id', 'scheme_id'] }, include: [
+                    {
+                        model: InvestmentStatus,
+                        attributes: ['investment_status_name']
+                    },
+                    {
+                        model: SchemeDetail,
+                        attributes: ['scheme_name', 'scheme_code']
+                    },
+                ]
+            });
+
+            if (count > 0) {
+                const investments = rows.map(row => row.toJSON());
+                return res.json(createApiResponse({ count, investments }, 200));
+            }
+            else {
+                return res.json(createApiResponse({ count }, 400));
+            }
+
+        } catch (error) {
+            let data = { message: 'Error getting Investments', errmsg: error }
+            return res.json(createApiResponse(data, 500));
+        }
+    }
+}

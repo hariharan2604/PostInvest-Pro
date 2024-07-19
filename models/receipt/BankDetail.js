@@ -1,30 +1,29 @@
-import { DataTypes, Model } from 'sequelize';
-import sequelize from '../db/connection.js';
+import { DataTypes, Model, UUIDV4 } from 'sequelize';
+import sequelize from '../../db/connection.js';
 import { v4 as uuidv4 } from 'uuid';
+class BankDetail extends Model { }
 
-class SchemeDetail extends Model { }
-
-SchemeDetail.init(
+BankDetail.init(
     {
         id: {
             type: DataTypes.UUID,
-            defaultValue:uuidv4,
             primaryKey: true,
+            defaultValue:uuidv4,
             allowNull: false,
         },
-        scheme_code: {
+        bank_name: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        scheme_name: {
+        code: {
             type: DataTypes.STRING,
             allowNull: false,
-        },
+        }
     },
     {
         sequelize,
-        modelName: 'SchemeDetail',
+        modelName: 'BankDetail',
     }
 );
 
-export default SchemeDetail;
+export default BankDetail;

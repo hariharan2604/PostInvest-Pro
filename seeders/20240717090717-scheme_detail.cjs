@@ -8,47 +8,65 @@ module.exports = {
       {
         "id":uuidv4(),
         "scheme_code": "SB",
-        "scheme_name": "Post Office Savings Account"
+        "scheme_name": "Post Office Savings Account",
+        createdAt: new Date(),
+        updatedAt: new Date()
       },
       {
         "id": uuidv4(),
         "scheme_code": "RD",
-        "scheme_name": "National Savings Recurring Deposit Account"
+        "scheme_name": "National Savings Recurring Deposit Account",
+        createdAt: new Date(),
+        updatedAt: new Date()
       },
       {
         "id": uuidv4(),
         "scheme_code": "TD",
-        "scheme_name": "National Savings Time Deposit Account"
+        "scheme_name": "National Savings Time Deposit Account",
+        createdAt: new Date(),
+        updatedAt: new Date()
       },
       {
         "id": uuidv4(),
         "scheme_code": "MIS",
-        "scheme_name": "National Savings Monthly Income Account"
+        "scheme_name": "National Savings Monthly Income Account",
+        createdAt: new Date(),
+        updatedAt: new Date()
       },
       {
         "id": uuidv4(),
         "scheme_code": "SCSS",
-        "scheme_name": "Senior Citizens Savings Scheme Account"
+        "scheme_name": "Senior Citizens Savings Scheme Account",
+        createdAt: new Date(),
+        updatedAt: new Date()
       },
       {
         "id": uuidv4(),
         "scheme_code": "PPF",
-        "scheme_name": "Public Provident Fund Account"
+        "scheme_name": "Public Provident Fund Account",
+        createdAt: new Date(),
+        updatedAt: new Date()
       },
       {
         "id": uuidv4(),
         "scheme_code": "SSA",
-        "scheme_name": "Sukanya Samriddhi Account"
+        "scheme_name": "Sukanya Samriddhi Account",
+        createdAt: new Date(),
+        updatedAt: new Date()
       },
       {
         "id": uuidv4(),
         "scheme_code": "NSC",
-        "scheme_name": "National Savings Certificates (VIIIth Issue)"
+        "scheme_name": "National Savings Certificates (VIIIth Issue)",
+        createdAt: new Date(),
+        updatedAt: new Date()
       },
       {
         "id": uuidv4(),
         "scheme_code": "KVP",
-        "scheme_name": "Kisan Vikas Patra"
+        "scheme_name": "Kisan Vikas Patra",
+        createdAt: new Date(),
+        updatedAt: new Date()
       }
     ]
     await queryInterface.bulkInsert('SchemeDetail', scheme_detail, {});

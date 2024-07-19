@@ -1,26 +1,25 @@
 import { DataTypes, Model } from 'sequelize';
-import sequelize from '../db/connection.js';
-import { v4 as uuidv4 } from 'uuid';
+import sequelize from '../../db/connection.js';
+import { v4 as uuidv4 } from 'uuid'
+class InstrumentClass extends Model { }
 
-class InvestmentStatus extends Model { }
-
-InvestmentStatus.init(
+InstrumentClass.init(
     {
         id: {
             type: DataTypes.UUID,
+            defaultValue: uuidv4,
             primaryKey: true,
-            defaultValue:uuidv4,
             allowNull: false,
         },
-        investment_status_name: {
+        instrument_class_name: {
             type: DataTypes.STRING,
             allowNull: false,
         },
     },
     {
         sequelize,
-        modelName: 'InvestmentStatus',
+        modelName: 'InstrumentClass',
     }
 );
 
-export default InvestmentStatus;
+export default InstrumentClass;

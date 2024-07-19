@@ -1,8 +1,5 @@
-// CustomerRelationship.js
-
 import { DataTypes, Model } from 'sequelize';
-import sequelize from '../db/connection.js';
-// import Customer from './Customer.js';
+import sequelize from '../../db/connection.js';
 
 class CustomerRelationship extends Model { }
 
@@ -17,14 +14,14 @@ CustomerRelationship.init(
         customerId: {
             type: DataTypes.UUID,
             allowNull: false,
-            onUpdate: 'CASCADE', // Ensures referential integrity on updates
-            onDelete: 'CASCADE', // Ensures referential integrity on deletes
+            onUpdate: 'CASCADE', 
+            onDelete: 'CASCADE', 
         },
         relatedCustomerId: {
             type: DataTypes.UUID,
             allowNull: false,
-            onUpdate: 'CASCADE', // Ensures referential integrity on updates
-            onDelete: 'CASCADE', // Ensures referential integrity on deletes
+            onUpdate: 'CASCADE', 
+            onDelete: 'CASCADE', 
         },
     },
     {

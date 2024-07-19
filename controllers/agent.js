@@ -3,8 +3,10 @@ import jwt from 'jsonwebtoken';
 import { Op } from 'sequelize';
 import { createApiResponse } from '../utilities/httpResponse.js';
 import { dateObj } from '../utilities/dateFormatter.js';
-import Agent from '../models/Agent.js';
-import Credentials from '../models/Credentials.js';
+// import Agent from '../models/agent/Agent.js';
+// import Credentials from '../models/agent/Credentials.js';
+import { Agent, Credentials } from '../models/agent/AgentAssociation.js';
+
 export default class Auth {
     async register(req, res) {
         try {
@@ -24,7 +26,7 @@ export default class Auth {
             });
             if (existingUser.length != 0) {
                 let data = { message: 'Mobile or Email already Exists' }
-                res.json(createApiResponse(data, 200));
+                return res.json(createApiResponse(data, 200));
             }
             else {
                 const hashedPassword = await bcrypt.hash(password, 10);
@@ -47,11 +49,11 @@ export default class Auth {
                     agent_id: agent.id
                 });
                 let data = { message: 'User Registration successful' };
-                res.json(createApiResponse(data, 200));
+                return res.json(createApiResponse(data, 200));
             }
         } catch (error) {
             let data = { message: 'Registration failed', errmsg: error }
-            res.json(createApiResponse(data, 500));
+            return res.json(createApiResponse(data, 500));
         }
     }
 
@@ -72,10 +74,10 @@ export default class Auth {
                 expiresIn: "1h",
             });
             let data = { token };
-            res.json(createApiResponse(data, 200));
+            return res.json(createApiResponse(data, 200));
         } catch (error) {
             let data = { message: 'Login failed', errmsg: error };
-            res.json(createApiResponse(data, 500));
+            return res.json(createApiResponse(data, 500));
         }
     }
 }

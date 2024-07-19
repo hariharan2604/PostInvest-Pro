@@ -1,9 +1,9 @@
 import { DataTypes, Model } from 'sequelize';
-import sequelize from '../db/connection.js';
+import sequelize from '../../db/connection.js';
 import { v4 as uuidv4 } from 'uuid'
-class InstrumentClass extends Model { }
+class ReceiptType extends Model { }
 
-InstrumentClass.init(
+ReceiptType.init(
     {
         id: {
             type: DataTypes.UUID,
@@ -11,15 +11,15 @@ InstrumentClass.init(
             primaryKey: true,
             allowNull: false,
         },
-        instrument_class_name: {
+        receipt_type_name: {
             type: DataTypes.STRING,
             allowNull: false,
         },
     },
     {
         sequelize,
-        modelName: 'InstrumentClass',
+        modelName: 'ReceiptType',
     }
 );
 
-export default InstrumentClass;
+export default ReceiptType;

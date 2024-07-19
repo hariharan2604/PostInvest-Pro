@@ -1,8 +1,8 @@
 import { DataTypes, Model, UUIDV4 } from 'sequelize';
-import sequelize from '../db/connection.js';
+import sequelize from '../../db/connection.js';
 import { v4 as uuidv4 } from 'uuid';
 import RemittanceProcess from './RemittanceProcess.js';
-import ProcessCalendar from './ProcessCalendar.js';
+import ProcessCalendar from '../ProcessCalendar.js';
 import ReceiptType from './ReceiptType.js';
 
 class RemittanceSubmitted extends Model { }
@@ -59,8 +59,8 @@ RemittanceSubmitted.init(
     }
 );
 
-RemittanceSubmitted.belongsTo(RemittanceProcess, { foreignKey: 'remittance_process_id' })
-RemittanceSubmitted.belongsTo(ProcessCalendar, { foreignKey: 'process_calendar_id' })
-RemittanceSubmitted.belongsTo(ReceiptType, { foreignKey: 'receipt_type_id' })
+// RemittanceSubmitted.belongsTo(RemittanceProcess, { foreignKey: 'remittance_process_id' })
+// RemittanceSubmitted.belongsTo(ProcessCalendar, { foreignKey: 'process_calendar_id' })
+// RemittanceSubmitted.belongsTo(ReceiptType, { foreignKey: 'receipt_type_id' })
 
 export default RemittanceSubmitted;

@@ -7,11 +7,15 @@ module.exports = {
     const receipt_type = [
       {
         id: uuidv4(),
-        receipt_type_name: "cash"
+        receipt_type_name: "cash",
+        createdAt: new Date(),
+        updatedAt: new Date()
       },
       {
         id: uuidv4(),
-        receipt_type_name: "cheque"
+        receipt_type_name: "cheque",
+        createdAt: new Date(),
+        updatedAt: new Date()
       }
     ]
     await queryInterface.bulkInsert('ReceiptType', receipt_type, {});

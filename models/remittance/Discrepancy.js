@@ -1,8 +1,7 @@
 import { DataTypes, Model, UUIDV4 } from 'sequelize';
 import sequelize from '../db/connection.js';
 import { v4 as uuidv4 } from 'uuid';
-import ProcessCalendar from './ProcessCalendar.js';
-import RemittanceProcess from './RemittanceProcess.js';
+
 
 class Discrepancy extends Model { }
 
@@ -66,7 +65,7 @@ Discrepancy.init(
     }
 );
 
-Discrepancy.belongsTo(ProcessCalendar, { foreignKey: 'process_calendar_id' })
-Discrepancy.belongsTo(RemittanceProcess, { foreignKey: 'remittance_process_id' })
+// Discrepancy.belongsTo(ProcessCalendar, { foreignKey: 'process_calendar_id' })
+// Discrepancy.belongsTo(RemittanceProcess, { foreignKey: 'remittance_process_id' })
 
 export default Discrepancy;

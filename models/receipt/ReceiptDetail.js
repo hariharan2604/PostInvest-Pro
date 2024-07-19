@@ -1,5 +1,5 @@
 import { DataTypes, Model } from 'sequelize';
-import sequelize from '../db/connection.js';
+import sequelize from '../../db/connection.js';
 import { v4 as uuidv4 } from "uuid"
 import Investment from './Investment.js';
 import ReceiptCollection from './ReceiptCollection.js';
@@ -38,7 +38,7 @@ ReceiptDetail.init(
     }
 );
 
-ReceiptDetail.belongsTo(Investment, { foreignKey: 'investment_id' });
-ReceiptDetail.belongsTo(ReceiptCollection, { foreignKey: 'receipt_collection_id' });
+// ReceiptDetail.belongsTo(Investment, { foreignKey: 'investment_id' });
+// ReceiptDetail.belongsTo(ReceiptCollection, { foreignKey: 'receipt_collection_id' });
 
 export default ReceiptDetail;
