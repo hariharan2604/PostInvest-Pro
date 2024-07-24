@@ -1,10 +1,10 @@
-import Customer from "../customer/Customer";
-import Investment from "../investment/Investment";
-import BankDetail from "./BankDetail";
-import InstrumentClass from "./InstrumentClass";
-import ReceiptCollection from "./ReceiptCollection";
-import ReceiptDetail from "./ReceiptDetail";
-import ReceiptType from "./ReceiptType";
+import Customer from "../customer/Customer.js";
+import Investment from "../investment/Investment.js";
+import BankDetail from "./BankDetail.js";
+import InstrumentClass from "./InstrumentClass.js";
+import ReceiptCollection from "./ReceiptCollection.js";
+import ReceiptDetail from "./ReceiptDetail.js";
+import ReceiptType from "./ReceiptType.js";
 
 
 ReceiptCollection.belongsTo(Customer, { foreignKey: 'customer_id' });

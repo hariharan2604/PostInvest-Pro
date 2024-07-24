@@ -1,8 +1,6 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../../db/connection.js';
 import { v4 as uuidv4 } from 'uuid';
-import ReceiptType from './ReceiptType.js';
-import InstrumentClass from './InstrumentClass.js';
 
 class ReceiptCollection extends Model { }
 

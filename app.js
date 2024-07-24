@@ -7,6 +7,7 @@ import sequelize from './db/connection.js';
 import authRoutes from './routes/auth.js';
 import customerRoutes from './routes/customer.js';
 import investmentRoutes from './routes/investment.js';
+import receiptRoutes from './routes/receipt.js';
 import { createApiResponse } from './utilities/httpResponse.js';
 
 const app = express();
@@ -21,6 +22,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/customer', customerRoutes);
 app.use('/api/v1/investment', investmentRoutes);
+app.use('/api/v1/receipt', receiptRoutes);
 
 app.use(function (req, res, next) {
   next(createError(404));
@@ -34,7 +36,7 @@ app.use(function (err, req, res, next) {
   let notFoundData = {
     message: "Requested resource is not found.."
   };
-  res.json(createApiResponse(notFoundData,404));
+  res.json(createApiResponse(notFoundData, 404));
 });
 
 app.listen(process.env.PORT);
