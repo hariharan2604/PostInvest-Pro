@@ -2,7 +2,7 @@ import { Op } from 'sequelize';
 import { createApiResponse } from '../utilities/httpResponse.js';
 import { dateObj } from '../utilities/dateFormatter.js'
 import { Investment, InvestmentStatus, SchemeDetail, InvestmentDetail } from '../models/investment/InvestmentAssociation.js';
-export default class Investment_Controller {
+export default class InvestmentController {
     async addInvestment(req, res) {
         try {
             const {

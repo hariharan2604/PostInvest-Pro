@@ -5,7 +5,7 @@ import { arrayDifference } from '../utilities/arrayDifference.js';
 import { Customer, CustomerRelationship, Investment } from '../models/customer/CustomerAssociation.js';
 import SchemeDetail from '../models/investment/SchemeDetail.js';
 
-export default class Customer_controller {
+export default class CustomerController {
     async createCustomer(req, res) {
         try {
             const {
@@ -40,7 +40,7 @@ export default class Customer_controller {
                 cif: null,
             });
 
-            Customer_controller.updateRelations(relations.length > 0 ? relations : null, createdCustomer);
+            CustomerController.updateRelations(relations.length > 0 ? relations : null, createdCustomer);
 
             let data = { message: 'Customer Creation successfull', createdCustomer }
             return res.json(createApiResponse(data, 200));
@@ -87,7 +87,7 @@ export default class Customer_controller {
 
             const relationsToRemove = arrayDifference(oldRelations, relations);
 
-            Customer_controller.updateRelations(relations.length > 0 ? relations : null, existingCustomer, relationsToRemove.length > 0 ? relationsToRemove : null)
+            CustomerController.updateRelations(relations.length > 0 ? relations : null, existingCustomer, relationsToRemove.length > 0 ? relationsToRemove : null)
 
             if (existingCustomer) {
                 await existingCustomer.update({
@@ -140,7 +140,7 @@ export default class Customer_controller {
                 };
             }
             const { count, rows } = await Customer.findAndCountAll({ attributes: ['id', 'name'], where: whereData });
-            
+
             if (count > 0) {
                 const customers = rows.map(row => row.toJSON());
                 return res.json(createApiResponse({ count, customers }, 200));
@@ -169,7 +169,7 @@ export default class Customer_controller {
                     },
                     {
                         model: Investment,
-                        attributes: ['id', 'investment_acc_no','installment_amount','scheme_id']
+                        attributes: ['id', 'investment_acc_no', 'installment_amount', 'scheme_id']
                     }
                 ],
                 attributes: {

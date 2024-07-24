@@ -3,8 +3,6 @@ import jwt from 'jsonwebtoken';
 import { Op } from 'sequelize';
 import { createApiResponse } from '../utilities/httpResponse.js';
 import { dateObj } from '../utilities/dateFormatter.js';
-// import Agent from '../models/agent/Agent.js';
-// import Credentials from '../models/agent/Credentials.js';
 import { Agent, Credentials } from '../models/agent/AgentAssociation.js';
 
 export default class Auth {
