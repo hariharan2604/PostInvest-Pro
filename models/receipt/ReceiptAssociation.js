@@ -5,6 +5,7 @@ import InstrumentClass from "./InstrumentClass.js";
 import ReceiptCollection from "./ReceiptCollection.js";
 import ReceiptDetail from "./ReceiptDetail.js";
 import ReceiptType from "./ReceiptType.js";
+import SchemeDetail from "../investment/SchemeDetail.js";
 
 
 ReceiptCollection.belongsTo(Customer, { foreignKey: 'customer_id' });
@@ -14,6 +15,3 @@ ReceiptCollection.belongsTo(InstrumentClass, { foreignKey: 'instrument_class_id'
 ReceiptDetail.belongsTo(Investment, { foreignKey: 'investment_id' });
 ReceiptDetail.belongsTo(ReceiptCollection, { foreignKey: 'receipt_collection_id' });
 
-export {
-    Customer, Investment, BankDetail, InstrumentClass, ReceiptCollection, ReceiptDetail, ReceiptType,
-}

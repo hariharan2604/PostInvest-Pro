@@ -1,7 +1,11 @@
-import { Op } from 'sequelize';
+import { Op, Sequelize } from 'sequelize';
 import { createApiResponse } from '../utilities/httpResponse.js';
 import { dateObj } from '../utilities/dateFormatter.js'
-import { Investment, InvestmentStatus, SchemeDetail, InvestmentDetail } from '../models/investment/InvestmentAssociation.js';
+import '../models/investment/InvestmentAssociation.js';
+import Investment from '../models/investment/Investment.js';
+import InvestmentStatus from '../models/investment/InvestmentStatus.js';
+import InvestmentDetail from '../models/investment/InvestmentDetail.js';
+import SchemeDetail from '../models/investment/SchemeDetail.js';
 export default class InvestmentController {
     async addInvestment(req, res) {
         try {
@@ -87,14 +91,22 @@ export default class InvestmentController {
 
             const { count, rows } = await Investment.findAndCountAll({
                 where: whereData,
-                attributes: { exclude: ['createdAt', 'updatedAt', 'status_id', 'scheme_id'] }, include: [
+                attributes: {
+                    include: [
+                        [Sequelize.col('InvestmentStatus.investment_status_name'), 'investment_status'],
+                        [Sequelize.col('SchemeDetail.scheme_name'), 'scheme_name'],
+                        [Sequelize.col('SchemeDetail.scheme_code'), 'scheme_code']
+                    ],
+                    exclude: ['createdAt', 'updatedAt']
+                },
+                include: [
                     {
                         model: InvestmentStatus,
-                        attributes: ['investment_status_name']
+                        attributes: []
                     },
                     {
                         model: SchemeDetail,
-                        attributes: ['scheme_name', 'scheme_code']
+                        attributes: []
                     },
                 ]
             });
@@ -108,6 +120,7 @@ export default class InvestmentController {
             }
 
         } catch (error) {
+            console.log('error :115', error);
             let data = { message: 'Error getting Investments', errmsg: error }
             return res.json(createApiResponse(data, 500));
         }

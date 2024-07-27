@@ -1,5 +1,3 @@
-import ProcessCalendar from './ProcessCalendar.js';
-import RemittanceProcess from './RemittanceProcess.js';
 import RemittanceProcessStatus from './RemittanceProcessStatus.js';
 import RemittanceProcessDetail from './RemittanceProcessDetail.js';
 import RemittanceProcess from './RemittanceProcess.js';
@@ -24,7 +22,3 @@ RemittanceProcessDetail.belongsTo(ReceiptType, { foreignKey: 'receipt_type_id' }
 RemittanceSubmitted.belongsTo(RemittanceProcess, { foreignKey: 'remittance_process_id' })
 RemittanceSubmitted.belongsTo(ProcessCalendar, { foreignKey: 'process_calendar_id' })
 RemittanceSubmitted.belongsTo(ReceiptType, { foreignKey: 'receipt_type_id' })
-
-export {
-    ProcessCalendar, RemittanceProcess, RemittanceProcessStatus, RemittanceProcessDetail, RemittanceProcess, Customer, Investment, ReceiptDetail, ReceiptCollection, ProcessCalendar, ReceiptType,
-}

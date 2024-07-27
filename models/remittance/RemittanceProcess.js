@@ -18,7 +18,7 @@ RemittanceProcess.init(
             allowNull: false,
         },
         lot: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.STRING,
             allowNull: false,
         },
         process_date: {
@@ -42,10 +42,38 @@ RemittanceProcess.init(
     {
         sequelize,
         modelName: 'RemittanceProcess',
+        hooks: {
+            beforeCreate: async (instance) => {
+                const lot = await generateCustomId();
+                instance.lot = lot;
+            }
+        }
     }
 );
+async function generateCustomId() {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
 
-// RemittanceProcess.belongsTo(RemittanceProcessStatus, { foreignKey: 'remittance_process_status' });
-// RemittanceProcess.belongsTo(ProcessCalendar, { foreignKey: 'process_calendar_id' });
+    const latestRecord = await RemittanceProcess.findOne({
+        where: {
+            lot: {
+                [sequelize.Op.like]: `${year}${month}%`
+            }
+        },
+        order: [['createdAt', 'DESC']],
+    });
+
+    let increment = 1;
+
+    if (latestRecord) {
+        const latestCustomId = latestRecord.lot;
+        const latestIncrement = parseInt(latestCustomId.slice(6), 10);
+        increment = latestIncrement + 1;
+    }
+
+    const incrementStr = String(increment).padStart(5, '0');
+    return `${year}${month}${incrementStr}`;
+}
 
 export default RemittanceProcess;

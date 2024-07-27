@@ -2,7 +2,10 @@ import { Op } from 'sequelize';
 import { createApiResponse } from '../utilities/httpResponse.js';
 import { dateObj } from '../utilities/dateFormatter.js'
 import { arrayDifference } from '../utilities/arrayDifference.js';
-import { Customer, CustomerRelationship, Investment } from '../models/customer/CustomerAssociation.js';
+import '../models/customer/CustomerAssociation.js';
+import Customer from '../models/customer/Customer.js';
+import CustomerRelationship from '../models/customer/CustomerRelationship.js';
+import Investment from '../models/investment/Investment.js';
 import SchemeDetail from '../models/investment/SchemeDetail.js';
 
 export default class CustomerController {

@@ -56,9 +56,5 @@ ReceiptCollection.init(
     }
 );
 
-// ReceiptCollection.belongsTo(Customer, { foreignKey: 'customer_id' });
-// ReceiptCollection.belongsTo(BankDetail, { foreignKey: 'bank_id' });
-// ReceiptCollection.belongsTo(ReceiptType, { foreignKey: 'receipt_type_id' });
-// ReceiptCollection.belongsTo(InstrumentClass, { foreignKey: 'instrument_class_id' });
 
 export default ReceiptCollection;
