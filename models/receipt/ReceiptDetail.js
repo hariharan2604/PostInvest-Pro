@@ -28,7 +28,10 @@ ReceiptDetail.init(
             type: DataTypes.INTEGER,
             allowNull: false,
         },
-
+        receipt_validity: {
+            type: DataTypes.UUID,
+            allowNull: false,
+        }
     },
     {
         sequelize,
@@ -36,7 +39,5 @@ ReceiptDetail.init(
     }
 );
 
-// ReceiptDetail.belongsTo(Investment, { foreignKey: 'investment_id' });
-// ReceiptDetail.belongsTo(ReceiptCollection, { foreignKey: 'receipt_collection_id' });
 
 export default ReceiptDetail;

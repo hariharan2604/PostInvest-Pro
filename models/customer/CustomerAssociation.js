@@ -13,4 +13,3 @@ Customer.belongsTo(Agent, { foreignKey: 'agent_id' });
 Customer.hasMany(Investment, { foreignKey: 'customer_id' });
 
 
-export { Customer, CustomerRelationship, Agent, Investment };

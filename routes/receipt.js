@@ -8,5 +8,6 @@ router.use(verifyToken);
 
 router.post('/add', receipt.addReceipt);
 router.post('/get', receipt.getReceipt);
+router.post('/get/detail', receipt.getReceiptDetail);
 
 export default router;

@@ -36,6 +36,16 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
+      receipt_validity: {
+        type: Sequelize.UUID,
+        allowNull: false,
+        references: {
+          model: 'ReceiptValidity', // name of the target model (Agents)
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
+      },
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,
