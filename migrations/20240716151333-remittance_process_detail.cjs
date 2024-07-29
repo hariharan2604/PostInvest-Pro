@@ -50,7 +50,7 @@ module.exports = {
       },
       receipt_detail_id: {
         type: Sequelize.UUID,
-        allowNull: false,
+        allowNull: true,
         references: {
           model: 'ReceiptDetail', // name of the target model (Agents)
           key: 'id',
@@ -60,7 +60,7 @@ module.exports = {
       },
       receipt_type_id: {
         type: Sequelize.UUID,
-        allowNull: false,
+        allowNull: true,
         references: {
           model: 'ReceiptType', // name of the target model (Agents)
           key: 'id',
@@ -70,7 +70,7 @@ module.exports = {
       },
       receipt_collection_id: {
         type: Sequelize.UUID,
-        allowNull: false,
+        allowNull: true,
         references: {
           model: 'ReceiptCollection', // name of the target model (Agents)
           key: 'id',
@@ -80,15 +80,21 @@ module.exports = {
       },
       remittance_amount: {
         type: Sequelize.FLOAT,
-        allowNull: false,
+        allowNull: true,
       },
       no_of_installments: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
       },
       record_identifier: {
-        type: Sequelize.STRING,
-        allowNull: false,
+        type: Sequelize.UUID,
+        allowNull: true,
+        references: {
+          model: 'RecordIdentifier', // name of the target model (Agents)
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       cheque_number: {
         type: Sequelize.STRING,
@@ -100,7 +106,7 @@ module.exports = {
       },
       bank_name: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       sb_acc_number: {
         type: Sequelize.STRING,

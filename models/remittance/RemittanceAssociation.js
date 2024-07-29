@@ -7,6 +7,7 @@ import ReceiptDetail from '../receipt/ReceiptDetail.js';
 import ReceiptCollection from '../receipt/ReceiptCollection.js';
 import ProcessCalendar from '../ProcessCalendar.js';
 import ReceiptType from '../receipt/ReceiptType.js';
+import RecordIdentifier from './RecordIdentifier.js';
 
 Discrepancy.belongsTo(ProcessCalendar, { foreignKey: 'process_calendar_id' })
 Discrepancy.belongsTo(RemittanceProcess, { foreignKey: 'remittance_process_id' })
@@ -17,6 +18,7 @@ RemittanceProcessDetail.belongsTo(Customer, { foreignKey: 'customer_id' })
 RemittanceProcessDetail.belongsTo(Investment, { foreignKey: 'investment_id' })
 RemittanceProcessDetail.belongsTo(ReceiptDetail, { foreignKey: 'receipt_detail_id' })
 RemittanceProcessDetail.belongsTo(ReceiptCollection, { foreignKey: 'receipt_collection_id' })
+RemittanceProcessDetail.belongsTo(RecordIdentifier, { foreignKey: 'record_identifier' });
 RemittanceProcessDetail.belongsTo(ProcessCalendar, { foreignKey: 'process_calendar_id' })
 RemittanceProcessDetail.belongsTo(ReceiptType, { foreignKey: 'receipt_type_id' })
 RemittanceSubmitted.belongsTo(RemittanceProcess, { foreignKey: 'remittance_process_id' })

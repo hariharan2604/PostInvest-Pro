@@ -30,26 +30,26 @@ RemittanceProcessDetail.init(
         },
         receipt_detail_id: {
             type: DataTypes.UUID,
-            allowNull: false,
+            allowNull: true,
         },
         receipt_type_id: {
             type: DataTypes.UUID,
-            allowNull: false,
+            allowNull: true,
         },
         receipt_collection_id: {
             type: DataTypes.UUID,
-            allowNull: false,
+            allowNull: true,
         },
         remittance_amount: {
             type: DataTypes.FLOAT,
-            allowNull: false,
+            allowNull: true,
         },
         no_of_installments: {
             type: DataTypes.INTEGER,
-            allowNull: false,
+            allowNull: true,
         },
         record_identifier: {
-            type: DataTypes.STRING,
+            type: DataTypes.UUID,
             allowNull: false,
         },
         cheque_number: {
@@ -62,7 +62,7 @@ RemittanceProcessDetail.init(
         },
         bank_name: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
         },
         sb_acc_number: {
             type: DataTypes.STRING,
