@@ -26,7 +26,7 @@ export default class ReceiptController {
         } = req.body;
 
         try {
-            if (chq_number && cheque_date && bank_id && sb_acc_number && receipt_type_id == "fe8ac20b-ee16-460a-af51-c827514d338b") {
+            if (chq_number && cheque_date && bank_id && sb_acc_number && receipt_type_id == "a2b4f588-c31b-48a1-88d8-5d7958be432c") {
                 const existingCheque = await ReceiptCollection.findAll({
                     where: {
                         chq_number: {
@@ -46,7 +46,7 @@ export default class ReceiptController {
                     chq_number,
                     cheque_date: dateObj(cheque_date),
                     bank_id,
-                    instrument_class_id: instrument_class_id != "" ? instrument_class_id : '6887a4a8-5db7-4500-926c-4926da89dea0',
+                    instrument_class_id: instrument_class_id != "" ? instrument_class_id : '72459613-8d19-497b-a2a5-4be980740a10',
                     sb_acc_number
                 });
                 let receipt_detail = await ReceiptController.addReceiptDetail(receipt_details, createdReceipt.id);
@@ -54,7 +54,7 @@ export default class ReceiptController {
                 let data = { message: 'Receipt Created', createdReceipt, receipt_detail }
                 return res.json(createApiResponse(data, 201));
             }
-            else if (receipt_type_id == "9a054572-d422-41d2-b255-9651be69c18d") {
+            else if (receipt_type_id == "e35ad61e-2cb8-4110-b37c-dae78658521e") {
                 const createdReceipt = await ReceiptCollection.create({
                     receipt_type_id,
                     receipt_date: Date.now(),
@@ -63,7 +63,7 @@ export default class ReceiptController {
                     chq_number: null,
                     cheque_date: null,
                     bank_id: null,
-                    instrument_class_id: '6887a4a8-5db7-4500-926c-4926da89dea0',
+                    instrument_class_id: '72459613-8d19-497b-a2a5-4be980740a10',
                     sb_acc_number: null
                 });
                 let receipt_detail = await ReceiptController.addReceiptDetail(receipt_details, createdReceipt.id);
@@ -92,7 +92,7 @@ export default class ReceiptController {
                     receipt_collection_id,
                     remittance_amount: receipt_detail.remittance_amount,
                     no_of_installments: receipt_detail.no_of_installments,
-                    receipt_validity: "a5b803a0-e88a-4090-9031-e2f769f15a79"
+                    receipt_validity: "69f12a39-0b8d-48b4-acd8-520d02b527f2"
                 });
                 receipt.push(createdReceiptDetail.toJSON());
             }

@@ -43,7 +43,7 @@ export default class CustomerController {
                 cif: null,
             });
 
-            CustomerController.updateRelations(relations.length > 0 ? relations : null, createdCustomer);
+            await CustomerController.updateRelations(relations.length > 0 ? relations : null, createdCustomer);
 
             let data = { message: 'Customer Creation successfull', createdCustomer }
             return res.json(createApiResponse(data, 200));
@@ -90,10 +90,10 @@ export default class CustomerController {
 
             const relationsToRemove = arrayDifference(oldRelations, relations);
 
-            CustomerController.updateRelations(relations.length > 0 ? relations : null, existingCustomer, relationsToRemove.length > 0 ? relationsToRemove : null)
+            await CustomerController.updateRelations(relations.length > 0 ? relations : null, existingCustomer, relationsToRemove.length > 0 ? relationsToRemove : null)
 
             if (existingCustomer) {
-                await existingCustomer.update({
+                const updatedDetail = await existingCustomer.update({
                     name,
                     cif,
                     dob: dateObj(dob),
@@ -109,7 +109,7 @@ export default class CustomerController {
                     agent_id,
                 });
 
-                let data = { message: 'Customer Updation successfull' }
+                let data = { message: 'Customer Updation successfull', updatedCustomer: updatedDetail.toJSON() };
                 return res.json(createApiResponse(data, 200));
             }
             else {
