@@ -6,19 +6,19 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     const investment_status = [
       {
-        id: uuidv4(),
+        id: "3ab67c8f-6cd2-46e9-9823-800edb871621",
         investment_status_name: "open",
         createdAt: new Date(),
         updatedAt: new Date()
       },
       {
-        id: uuidv4(),
+        id: "0cdffbc7-6e5e-4aa1-9160-4ca85a2245dd",
         investment_status_name: "preclosed",
         createdAt: new Date(),
         updatedAt: new Date()
       },
       {
-        id: uuidv4(),
+        id: "1a9d7dad-0f2d-4f85-8346-3155bcc55ece",
         investment_status_name: "closed",
         createdAt: new Date(),
         updatedAt: new Date()
