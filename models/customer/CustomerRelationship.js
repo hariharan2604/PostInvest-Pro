@@ -23,6 +23,10 @@ CustomerRelationship.init(
             onUpdate: 'CASCADE', 
             onDelete: 'CASCADE', 
         },
+        relationship: {
+            type: DataTypes.STRING,
+            allowNull:false
+        }
     },
     {
         sequelize,

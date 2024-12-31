@@ -9,6 +9,7 @@ router.use(verifyToken);
 
 router.post('/create', customer.createCustomer);
 router.post('/update', customer.updateCustomer);
+router.post('/add-relation', customer.addRelation);
 router.post('/all', customer.getCustomers);
 router.post('/detail', customer.getCustomerDetails);
 
