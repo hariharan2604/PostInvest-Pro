@@ -7,6 +7,6 @@ router.use(verifyToken);
 
 router.post('/add', investment.addInvestment);
 router.post('/get', investment.getInvestment);
-router.post('/get-detail', investment.getInvestmentDetail);
+router.post('/detail', investment.getInvestmentDetail);
 
 export default router;

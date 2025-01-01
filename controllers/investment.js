@@ -6,6 +6,7 @@ import Investment from '../models/investment/Investment.js';
 import InvestmentStatus from '../models/investment/InvestmentStatus.js';
 import InvestmentDetail from '../models/investment/InvestmentDetail.js';
 import SchemeDetail from '../models/investment/SchemeDetail.js';
+import Customer from '../models/customer/Customer.js';
 export default class InvestmentController {
     async addInvestment(req, res) {
         try {
@@ -17,9 +18,13 @@ export default class InvestmentController {
                 tenure,
                 installment_amount,
                 investment_date,
-                next_installment_due,
                 status_id
             } = req.body;
+            const checkCif = await Customer.findByPk(customer_id);
+            if (checkCif.cif == null) {
+                let data = { message: 'Update Cif and add investment' }
+                return res.json(createApiResponse(data, 400));
+            }
             const existingInvestment = await Investment.findAll({
                 where: { investment_acc_no: investment_acc_no },
             });
@@ -28,6 +33,9 @@ export default class InvestmentController {
                 return res.json(createApiResponse(data, 400));
             }
             else {
+                let investment_created_date = dateObj(investment_date);
+                let next_due = new Date(new Date(investment_created_date).setMonth(investment_created_date.getMonth() + 1));
+
                 const createdInvestment = await Investment.create({
                     customer_id,
                     investment_acc_no,
@@ -35,11 +43,12 @@ export default class InvestmentController {
                     investment_amount,
                     tenure,
                     installment_amount,
-                    investment_date: dateObj(investment_date),
-                    next_installment_due: dateObj(next_installment_due),
+                    investment_date: investment_created_date,
+                    next_installment_due: next_due,
                     status_id
                 });
-                let data = { message: 'Investment Created', createdInvestment }
+
+                let data = { message: 'Investment Created' ,createdInvestment}
                 return res.json(createApiResponse(data, 201));
             }
         } catch (error) {
@@ -50,10 +59,10 @@ export default class InvestmentController {
     }
     async getInvestmentDetail(req, res) {
         try {
-            const { investment_id } = req.body;
+            const { investment_acc_no } = req.body;
             const { count, rows } = await Investment.findAndCountAll({
                 where: {
-                    id: investment_id
+                    investment_acc_no:investment_acc_no
                 },
                 attributes: { exclude: ['createdAt', 'updatedAt'] },
                 include:
@@ -66,7 +75,7 @@ export default class InvestmentController {
                 return res.json(createApiResponse({ count, investment_detail }, 200));
             }
             else {
-                return res.json(createApiResponse({ count }, 400));
+                return res.json(createApiResponse({ count }, 200));
             }
         } catch (error) {
             console.log('error :66', error);
