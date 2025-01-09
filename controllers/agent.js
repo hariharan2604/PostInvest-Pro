@@ -15,16 +15,20 @@ export default class Auth {
                     [Op.or]: [{
                         email: {
                             [Op.eq]: email
-                        },
+                        }
+                    },
+                    {
                         mobile: {
                             [Op.eq]: mobile
                         }
                     }]
                 }
             });
-            if (existingUser.length != 0) {
+
+
+            if (existingUser.length > 0) {
                 let data = { message: 'Mobile or Email already Exists' }
-                return res.json(createApiResponse(data, 200));
+                return res.json(createApiResponse(data, 400));
             }
             else {
                 const hashedPassword = await bcrypt.hash(password, 10);
@@ -33,12 +37,12 @@ export default class Auth {
                     mobile,
                     email,
                     gender,
-                    dob: dateObj(dob),
+                    dob,
                     address1,
                     address2,
                     area,
-                    city,
-                    state,
+                    city: city.value,
+                    state: state.value,
                     zip
                 });
                 await Credentials.create({
