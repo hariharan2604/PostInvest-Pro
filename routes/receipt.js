@@ -1,13 +1,15 @@
 import express from 'express';
-import { verifyToken } from '../middlewares/authMiddleware.js';
+import { verifyAccessToken } from '../middlewares/authMiddleware.js';
+
 import Receipt from '../controllers/receipt.js';
 
 const router = express.Router();
-const receipt = new Receipt();
-router.use(verifyToken);
+const receiptController = new Receipt();
 
-router.post('/add', receipt.addReceipt);
-router.post('/get', receipt.getReceipt);
-router.post('/get/detail', receipt.getReceiptDetail);
+router.use(verifyAccessToken);
+
+router.post('/add', receiptController.addReceipt);
+router.post('/get', receiptController.getReceipt);
+router.post('/get/detail', receiptController.getReceiptDetail);
 
 export default router;

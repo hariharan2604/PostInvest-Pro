@@ -8,13 +8,15 @@ import authRoutes from './routes/auth.js';
 import customerRoutes from './routes/customer.js';
 import investmentRoutes from './routes/investment.js';
 import receiptRoutes from './routes/receipt.js';
+
 import { createApiResponse } from './utilities/httpResponse.js';
+import { verifyAccessToken } from './middlewares/authMiddleware.js';
 
 const app = express();
 
 sequelize.sync();
 
-app.use(cors({origin:'http://api.test.dv/'}));
+app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -42,4 +44,4 @@ app.use(function (err, req, res, next) {
   res.json(createApiResponse(notFoundData, 404));
 });
 
-app.listen(process.env.PORT);
+app.listen(process.env.APP_PORT);
