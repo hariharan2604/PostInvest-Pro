@@ -1,15 +1,15 @@
 import express from 'express';
-import { verifyToken } from '../middlewares/authMiddleware.js';
+import { verifyAccessToken } from '../middlewares/authMiddleware.js';
 import Customer from '../controllers/customer.js';
-
-const customer = new Customer();
+const customerController = new Customer();
 const router = express.Router();
 
-router.use(verifyToken);
+router.use(verifyAccessToken);
 
-router.post('/create', customer.createCustomer);
-router.post('/update', customer.updateCustomer);
-router.post('/all', customer.getCustomers);
-router.post('/detail', customer.getCustomerDetails);
+router.post('/create', customerController.createCustomer);
+router.post('/update', customerController.updateCustomer);
+router.post('/add-relation', customerController.addRelation);
+router.post('/list', customerController.getCustomers);
+router.post('/detail', customerController.getCustomerDetails);
 
 export default router;

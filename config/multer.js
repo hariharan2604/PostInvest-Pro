@@ -20,4 +20,3 @@ const upload = multer({ storage: storage });
 export default upload;
 
 
-//import upload from './config/multer.js'; // Import the multer configuration

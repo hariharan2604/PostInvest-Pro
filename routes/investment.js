@@ -1,12 +1,13 @@
 import express from 'express';
 const router = express.Router();
-import { verifyToken } from '../middlewares/authMiddleware.js';
+import { verifyAccessToken } from '../middlewares/authMiddleware.js';
 import Investment from '../controllers/investment.js';
-const investment = new Investment();
-router.use(verifyToken);
+const investmentController = new Investment();
 
-router.post('/add', investment.addInvestment);
-router.post('/get', investment.getInvestment);
-router.post('/get-detail', investment.getInvestmentDetail);
+router.use(verifyAccessToken);
+
+router.post('/add', investmentController.addInvestment);
+router.post('/get', investmentController.getInvestment);
+router.post('/detail', investmentController.getInvestmentDetail);
 
 export default router;

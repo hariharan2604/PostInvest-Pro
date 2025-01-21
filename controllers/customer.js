@@ -23,8 +23,7 @@ export default class CustomerController {
                 city,
                 state,
                 zip,
-                agent_id,
-                relations
+                agent_id
             } = req.body;
 
             const createdCustomer = await Customer.create({
@@ -43,7 +42,7 @@ export default class CustomerController {
                 cif: null,
             });
 
-            CustomerController.updateRelations(relations.length > 0 ? relations : null, createdCustomer);
+            // await CustomerController.updateRelations(relations, createdCustomer);
 
             let data = { message: 'Customer Creation successfull', createdCustomer }
             return res.json(createApiResponse(data, 200));
@@ -70,30 +69,26 @@ export default class CustomerController {
                 state,
                 zip,
                 agent_id,
-                cif,
-                relations
+                cif
             } = req.body;
 
-            const existingCustomer = await Customer.findByPk(id, {
-                include: [
-                    {
-                        model: Customer,
-                        as: 'relatedCustomers',
-                        through: { attributes: [] },
-                        attributes: ['id', 'name']
+            // const existingCustomer = await Customer.findByPk(id, {
+            //     include: [
+            //         {
+            //             model: Customer,
+            //             as: 'relatedCustomers',
+            //             through: { attributes: [] },
+            //             attributes: ['id', 'name']
 
-                    },
-                ],
-            });
-            let oldRelations = existingCustomer.relatedCustomers;
-            oldRelations = oldRelations.map(item => item.id);
+            //         },
+            //     ],
+            // });
+            const existingCustomer = await Customer.findByPk(id);
 
-            const relationsToRemove = arrayDifference(oldRelations, relations);
 
-            CustomerController.updateRelations(relations.length > 0 ? relations : null, existingCustomer, relationsToRemove.length > 0 ? relationsToRemove : null)
 
             if (existingCustomer) {
-                await existingCustomer.update({
+                const updatedDetail = await existingCustomer.update({
                     name,
                     cif,
                     dob: dateObj(dob),
@@ -108,8 +103,14 @@ export default class CustomerController {
                     zip,
                     agent_id,
                 });
+                // let oldRelations = existingCustomer.relatedCustomers;
+                // oldRelations = oldRelations.map(item => item.id);
 
-                let data = { message: 'Customer Updation successfull' }
+                // const relationsToRemove = arrayDifference(oldRelations, relations);
+
+                // await CustomerController.updateRelations(relations, existingCustomer, relationsToRemove);
+
+                let data = { message: 'Customer Updation successfull', updatedCustomer: updatedDetail.toJSON() };
                 return res.json(createApiResponse(data, 200));
             }
             else {
@@ -119,6 +120,69 @@ export default class CustomerController {
         } catch (error) {
             console.log('error :101', error);
             let data = { message: 'Customer Updation failed', errmsg: error }
+            return res.json(createApiResponse(data, 500));
+        }
+    }
+
+    async addRelation(req, res) {
+        try {
+            const {
+                id,
+                name,
+                dob,
+                gender,
+                mobile,
+                email,
+                address1,
+                address2,
+                area,
+                city,
+                state,
+                zip,
+                agent_id,
+                relationship,
+                relation_id
+            } = req.body;
+            let relatedCustomerId = relation_id;
+            if (relation_id == null) {
+                const createdCustomer = await Customer.create({
+                    name,
+                    dob: dateObj(dob),
+                    gender,
+                    mobile,
+                    email,
+                    address1,
+                    address2,
+                    area,
+                    city,
+                    state,
+                    zip,
+                    agent_id,
+                    cif: null,
+                });
+                relatedCustomerId = createdCustomer.id;
+            }
+
+            await CustomerRelationship.findOrCreate({
+                where: {
+                    customerId: id,
+                    relatedCustomerId: relatedCustomerId,
+                    relationship: relationship
+
+                },
+                defaults: {
+                    customerId: id,
+                    relatedCustomerId: relatedCustomerId,
+                    relationship: relationship
+                }
+            });
+
+            let data = { message: 'Relation Added Successfull' }
+            return res.json(createApiResponse(data, 200));
+
+        } catch (error) {
+            console.log('error :101', error);
+            let data = { message: 'Relation Addition failed', errmsg: error }
             return res.json(createApiResponse(data, 500));
         }
     }
@@ -168,7 +232,6 @@ export default class CustomerController {
                         as: 'relatedCustomers',
                         through: { attributes: [] },
                         attributes: ['id', 'name']
-
                     },
                     {
                         model: Investment,
@@ -182,6 +245,13 @@ export default class CustomerController {
             if (rows) {
                 const customers = rows.toJSON();
                 for (const relation of customers.relatedCustomers) {
+                    const relation_type = await CustomerRelationship.findOne({
+                        where: {
+                            [Op.and]: [{ customerId: customerId, relatedCustomerId: relation.id }]
+                        },
+                        attributes: ['relationship']
+                    })
+                    relation.relation_type = relation_type.relationship;
                     const details = await Customer.findByPk(relation.id, {
                         include: {
                             model: Investment,
@@ -208,45 +278,50 @@ export default class CustomerController {
     }
 
     static async updateRelations(relations = null, Customer, relationsToRemove = null) {
-        if (relations.length > 0) {
-            relations.forEach(async (relation) => {
-                await CustomerRelationship.findOrCreate({
-                    where: {
-                        customerId: Customer.id,
-                        relatedCustomerId: relation
-                    },
-                    defaults: {
-                        customerId: Customer.id,
-                        relatedCustomerId: relation
-                    }
+        try {
+            if (relations?.length > 0) {
+                relations.forEach(async (relation) => {
+                    await CustomerRelationship.findOrCreate({
+                        where: {
+                            customerId: Customer.id,
+                            relatedCustomerId: relation
+                        },
+                        defaults: {
+                            customerId: Customer.id,
+                            relatedCustomerId: relation
+                        }
+                    });
+                    await CustomerRelationship.findOrCreate({
+                        where: {
+                            relatedCustomerId: Customer.id,
+                            customerId: relation
+                        },
+                        defaults: {
+                            relatedCustomerId: Customer.id,
+                            customerId: relation
+                        }
+                    });
                 });
-                await CustomerRelationship.findOrCreate({
-                    where: {
-                        relatedCustomerId: Customer.id,
-                        customerId: relation
-                    },
-                    defaults: {
-                        relatedCustomerId: Customer.id,
-                        customerId: relation
-                    }
+            }
+            if (relationsToRemove?.length > 0) {
+                relationsToRemove.forEach(async (relationtoremove) => {
+                    await CustomerRelationship.destroy({
+                        where: {
+                            customerId: Customer.id,
+                            relatedCustomerId: relationtoremove
+                        },
+                    });
+                    await CustomerRelationship.destroy({
+                        where: {
+                            customerId: relationtoremove,
+                            relatedCustomerId: Customer.id
+                        },
+                    });
                 });
-            });
+            }
         }
-        if (relationsToRemove) {
-            relationsToRemove.forEach(async (relationtoremove) => {
-                await CustomerRelationship.destroy({
-                    where: {
-                        customerId: Customer.id,
-                        relatedCustomerId: relationtoremove
-                    },
-                });
-                await CustomerRelationship.destroy({
-                    where: {
-                        customerId: relationtoremove,
-                        relatedCustomerId: Customer.id
-                    },
-                });
-            });
+        catch (error) {
+            throw new Error("Failed in updating relations");
         }
     }
 }

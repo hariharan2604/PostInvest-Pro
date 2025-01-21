@@ -1,7 +1,6 @@
 import { Op, Sequelize } from 'sequelize';
 import { createApiResponse } from '../utilities/httpResponse.js';
 import { dateObj } from '../utilities/dateFormatter.js'
-
 import "../models/investment/InvestmentAssociation.js";
 import "../models/receipt/ReceiptAssociation.js";
 import Customer from '../models/customer/Customer.js';
@@ -26,7 +25,29 @@ export default class ReceiptController {
         } = req.body;
 
         try {
-            if (chq_number && cheque_date && bank_id && sb_acc_number && receipt_type_id == "fe8ac20b-ee16-460a-af51-c827514d338b") {
+
+            const updatedReceiptDetails = await Promise.all(
+                receipt_details.map(async (receipt_detail) => {
+                    const installment = await Investment.findOne({
+                        where: { id: receipt_detail.investment_id },
+                        attributes: ['installment_amount']
+                    });
+                    const remittance_amount = installment.installment_amount * parseInt(receipt_detail.no_of_installments);
+
+                    return { ...receipt_detail, remittance_amount };
+                })
+            );
+
+
+            let denomination_total = updatedReceiptDetails.reduce((n, { remittance_amount }) => n + parseInt(remittance_amount), 0);
+
+            if (denomination_total != receipt_amount) {
+                let data = { message: 'Invalid denomination breakdown for the receipt' }
+                return res.json(createApiResponse(data, 400));
+            }
+
+
+            if (chq_number && cheque_date && bank_id && sb_acc_number && receipt_type_id == "a2b4f588-c31b-48a1-88d8-5d7958be432c") {
                 const existingCheque = await ReceiptCollection.findAll({
                     where: {
                         chq_number: {
@@ -46,15 +67,15 @@ export default class ReceiptController {
                     chq_number,
                     cheque_date: dateObj(cheque_date),
                     bank_id,
-                    instrument_class_id: instrument_class_id != "" ? instrument_class_id : '6887a4a8-5db7-4500-926c-4926da89dea0',
+                    instrument_class_id: instrument_class_id != "" ? instrument_class_id : '9b6ce667-f95c-4675-b848-2ac107e4b92e',
                     sb_acc_number
                 });
-                let receipt_detail = await ReceiptController.addReceiptDetail(receipt_details, createdReceipt.id);
+                let receipt_detail = await ReceiptController.addReceiptDetail(updatedReceiptDetails, createdReceipt.id);
 
                 let data = { message: 'Receipt Created', createdReceipt, receipt_detail }
                 return res.json(createApiResponse(data, 201));
             }
-            else if (receipt_type_id == "9a054572-d422-41d2-b255-9651be69c18d") {
+            else if (receipt_type_id == "e35ad61e-2cb8-4110-b37c-dae78658521e") {
                 const createdReceipt = await ReceiptCollection.create({
                     receipt_type_id,
                     receipt_date: Date.now(),
@@ -63,10 +84,10 @@ export default class ReceiptController {
                     chq_number: null,
                     cheque_date: null,
                     bank_id: null,
-                    instrument_class_id: '6887a4a8-5db7-4500-926c-4926da89dea0',
+                    instrument_class_id: '9b6ce667-f95c-4675-b848-2ac107e4b92e',
                     sb_acc_number: null
                 });
-                let receipt_detail = await ReceiptController.addReceiptDetail(receipt_details, createdReceipt.id);
+                let receipt_detail = await ReceiptController.addReceiptDetail(updatedReceiptDetails, createdReceipt.id);
 
                 let data = { message: 'Receipt Created', createdReceipt, receipt_detail }
                 return res.json(createApiResponse(data, 201));
@@ -92,7 +113,7 @@ export default class ReceiptController {
                     receipt_collection_id,
                     remittance_amount: receipt_detail.remittance_amount,
                     no_of_installments: receipt_detail.no_of_installments,
-                    receipt_validity: "a5b803a0-e88a-4090-9031-e2f769f15a79"
+                    receipt_validity: "69f12a39-0b8d-48b4-acd8-520d02b527f2"
                 });
                 receipt.push(createdReceiptDetail.toJSON());
             }
@@ -112,20 +133,24 @@ export default class ReceiptController {
             if (receipt_type_id) {
                 whereData.receipt_type_id = receipt_type_id;
             }
-            const rows = await ReceiptCollection.findAll({
-                where: whereData,
-                attributes: [
-                    'customer_id',
-                    [Sequelize.col('ReceiptType.receipt_type_name'), 'receipt_type'],
-                    [Sequelize.fn('SUM', Sequelize.col('receipt_amount')), 'total_amount'],
-                    [Sequelize.fn('COUNT', Sequelize.col('ReceiptCollection.id')), 'receipt_count']
-                ],
-                include: {
-                    model: ReceiptType,
-                    attributes: [],
-                },
-                group: ['customer_id', Sequelize.col('ReceiptType.receipt_type_name')]
-            });
+            // const rows = await ReceiptCollection.findAll({
+            //     where: whereData,
+            //     attributes: [
+            //         'customer_id',
+            //         [Sequelize.col('ReceiptType.receipt_type_name'), 'receipt_type'],
+            //         [Sequelize.fn('SUM', Sequelize.col('receipt_amount')), 'total_amount'],
+            //         [Sequelize.fn('COUNT', Sequelize.col('ReceiptCollection.id')), 'receipt_count']
+            //     ],
+            //     include: {
+            //         model: ReceiptType,
+            //         attributes: [],
+            //         include: {
+            //             model: Investment,
+            //             attributes:[],
+            //         }
+            //     },
+            //     group: ['customer_id', Sequelize.col('ReceiptType.receipt_type_name')]
+            // });
             if (rows.length > 0) {
                 const receipts = rows.map(row => row.toJSON());
                 return res.json(createApiResponse({ count: receipts.length, receipts }, 200));
@@ -150,7 +175,7 @@ export default class ReceiptController {
                 }
             }
             whereData.receipt_validity = {
-                [Op.eq]: 'a5b803a0-e88a-4090-9031-e2f769f15a79'
+                [Op.eq]: '69f12a39-0b8d-48b4-acd8-520d02b527f2'
             }
 
             const rows = await ReceiptDetail.findAll({
@@ -160,13 +185,14 @@ export default class ReceiptController {
                     [Sequelize.col('Investment.SchemeDetail.scheme_code'), 'scheme_code'],
                     [Sequelize.col('Investment.investment_acc_no'), 'investment_acc_no'],
                     [Sequelize.col('ReceiptCollection.ReceiptType.receipt_type_name'), 'receipt_type_name'],
-                    [Sequelize.fn('COUNT', Sequelize.col('investment_id')), 'receipt_count']
+                    [Sequelize.fn('COUNT', Sequelize.col('investment_id')), 'receipt_count'],
+                    [Sequelize.fn('SUM', Sequelize.col('no_of_installments')),'no_of_installments']
                 ],
                 where: whereData,
                 include: [
                     {
                         model: ReceiptCollection,
-                        attributes:[],
+                        attributes: [],
                         required: true,
                         include: [
                             {
@@ -200,8 +226,8 @@ export default class ReceiptController {
                 ]
             });
             if (rows.length > 0) {
-                const existingReceipts = rows.map(row => row.toJSON());
-                return res.json(createApiResponse({ count: existingReceipts.length, existingReceipts }, 200));
+                const receipts = rows.map(row => row.toJSON());
+                return res.json(createApiResponse({ count: receipts.length, receipts }, 200));
             } else {
                 return res.json(createApiResponse({ count: rows.length }, 400));
             }

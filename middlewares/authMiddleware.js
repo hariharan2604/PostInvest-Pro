@@ -1,27 +1,18 @@
 import jwt from 'jsonwebtoken';
 import { createApiResponse } from '../utilities/httpResponse.js';
 
-function verifyToken(req, res, next) {
-    const authHeader = req.header('Authorization');
-    if (!authHeader) {
-        let data = { message: 'Access denied' };
-        return res.json(createApiResponse(data, 401));
-    }
+export const verifyAccessToken = (req, res, next) => {
+    const token = req.header('Authorization')?.split(' ')[1];
 
-    const token = authHeader.split(' ')[1];
     if (!token) {
-        let data = { message: 'Access denied' };
-        return res.json(createApiResponse(data, 401));
+        return res.status(401).json(createApiResponse({ message: 'Access token missing' }, 401));
     }
 
     try {
-        const decoded = jwt.verify(token, process.env.SECRET_KEY);
-        req.userId = decoded.userId;
+        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+        req.user = decoded;
         next();
     } catch (error) {
-        let data = { message: 'Token Expired', errmsg: error }
-        return res.json(createApiResponse(data,500));
+        return res.status(403).json(createApiResponse({ message: 'Invalid or expired access token', error: error.message }, 403));
     }
-}
-
-export { verifyToken };
+};

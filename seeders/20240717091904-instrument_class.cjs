@@ -6,13 +6,13 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     const receipt_type = [
       {
-        id: uuidv4(),
+        id: "72459613-8d19-497b-a2a5-4be980740a10",
         instrument_class_name: "dop",
         createdAt: new Date(),
         updatedAt: new Date()
       },
       {
-        id: uuidv4(),
+        id: "9b6ce667-f95c-4675-b848-2ac107e4b92e",
         instrument_class_name: "others",
         createdAt: new Date(),
         updatedAt: new Date()
