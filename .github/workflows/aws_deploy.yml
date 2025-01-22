@@ -28,6 +28,12 @@ jobs:
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan -H $HOST >> ~/.ssh/known_hosts
 
+        # Test SSH connection
+        if ! ssh -i ~/.ssh/id_rsa $USER@$HOST "exit"; then
+          echo "SSH connection failed"
+          exit 1
+        fi
+
         ssh -i ~/.ssh/id_rsa $USER@$HOST << EOF
           cd /var/www/PostInvest-Pro
           git pull https://${USER}:${{ secrets.PAT_TOKEN }}@github.com/hariharan2604/PostInvest-Pro.git
@@ -38,10 +44,17 @@ jobs:
           # Rename .env.production to .env
           if [ -f .env.production ]; then
             mv .env.production .env
+          else
+            echo ".env.production not found, skipping rename."
           fi
 
-          # Restart the application with pm2
-          # pm2 restart ecosystem.config.cjs || pm2 start ecosystem.config.cjs
+          # Ensure pm2 is installed
+          if ! command -v pm2 &> /dev/null; then
+            echo "pm2 could not be found, installing..."
+            npm install -g pm2
+          fi
+
+          # Reload the application with pm2
           pm2 reload all
           sudo service nginx restart
         EOF
