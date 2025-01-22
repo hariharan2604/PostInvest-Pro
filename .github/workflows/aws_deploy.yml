@@ -1,0 +1,39 @@
+name: Reload on Push to Master
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  reload:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Checkout the repository using PAT for authentication
+    - name: Checkout Code
+      uses: actions/checkout@v3
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    # Deploy to Server (reload app)
+    - name: Reload Application
+      env:
+        HOST: ${{ secrets.SERVER_HOST }}
+        USER: ${{ secrets.SERVER_USER }}
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      run: |
+        ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key $USER@$HOST << EOF
+          cd /var/www/PostInvest-Pro
+          git pull https://$USER:${{ secrets.GITHUB_TOKEN }}@github.com/hariharan2604/PostInvest-Pro.git master
+          npm install
+
+          # Rename .env.production to .env
+          if [ -f .env.production ]; then
+            mv .env.production .env
+          fi
+
+          # Restart the application with pm2
+          pm2 restart ecosystem.config.cjs
+          sudo service nginx restart
+        EOF
