@@ -23,9 +23,14 @@ jobs:
         USER: ${{ secrets.SERVER_USER }}
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       run: |
-        ssh -o StrictHostKeyChecking=no -i ~/.ssh/authorized_keys $USER@$HOST << EOF
+        mkdir -p ~/.ssh
+        echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H $HOST >> ~/.ssh/known_hosts
+
+        ssh -i ~/.ssh/id_rsa $USER@$HOST << EOF
           cd /var/www/PostInvest-Pro
-          git pull https://$USER:${{ secrets.PAT_TOKEN }}@github.com/hariharan2604/PostInvest-Pro.git master
+          git pull https://${USER}:${{ secrets.PAT_TOKEN }}@github.com/hariharan2604/PostInvest-Pro.git master
           npm install
 
           # Rename .env.production to .env
@@ -34,6 +39,6 @@ jobs:
           fi
 
           # Restart the application with pm2
-          pm2 restart ecosystem.config.cjs
+          pm2 restart ecosystem.config.cjs || pm2 start ecosystem.config.cjs
           sudo service nginx restart
         EOF
