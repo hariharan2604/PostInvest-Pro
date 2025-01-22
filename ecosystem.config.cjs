@@ -1,22 +1,14 @@
 module.exports = {
   apps: [{
+    name: 'postinvest-pro',
     script: './app.js',
+    autorestart: true,
     // watch: '.',
     env: {
       "NODE_ENV": "development"
     },
-  }],
-
-  deploy: {
-    production: {
-      user: 'SSH_USERNAME',
-      host: 'SSH_HOSTMACHINE',
-      ref: 'origin/master',
-      repo: 'GIT_REPOSITORY',
-      path: 'DESTINATION_PATH',
-      'pre-deploy-local': '',
-      'post-deploy': 'npm install && pm2 reload ecosystem.config.js --env production',
-      'pre-setup': ''
+    env_production: {
+      "NODE_ENV": "production"
     }
-  }
+  }],
 };
