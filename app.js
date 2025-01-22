@@ -22,7 +22,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.get("/", (req, res) => {
-  res.send("hello");
+  res.send("hello new from updated api");
 })
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/customer', customerRoutes);
