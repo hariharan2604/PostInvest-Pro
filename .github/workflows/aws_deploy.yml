@@ -23,7 +23,7 @@ jobs:
         USER: ${{ secrets.SERVER_USER }}
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       run: |
-        ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key $USER@$HOST << EOF
+        ssh -o StrictHostKeyChecking=no -i ~/.ssh/authorized_keys $USER@$HOST << EOF
           cd /var/www/PostInvest-Pro
           git pull https://$USER:${{ secrets.PAT_TOKEN }}@github.com/hariharan2604/PostInvest-Pro.git master
           npm install
