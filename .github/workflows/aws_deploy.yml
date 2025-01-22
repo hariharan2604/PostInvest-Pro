@@ -68,6 +68,7 @@ jobs:
           fi
 
           # Reload the application with pm2
+          pm2 start ecosystem.config.cjs || pm2 restart ecosystem.config.cjs
           pm2 reload all
           sudo service nginx restart
         EOF
