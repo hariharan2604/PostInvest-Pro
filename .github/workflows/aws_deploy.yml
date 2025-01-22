@@ -31,7 +31,7 @@ jobs:
         ssh -i ~/.ssh/id_rsa $USER@$HOST << EOF
           cd /var/www/PostInvest-Pro
           git pull https://${USER}:${{ secrets.PAT_TOKEN }}@github.com/hariharan2604/PostInvest-Pro.git
-          cwd
+          pwd
           node --version
           npm install
 
