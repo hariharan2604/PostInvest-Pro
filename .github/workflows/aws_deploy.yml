@@ -1,4 +1,4 @@
-name: Reload on Push to Master
+name: Deploy to EC2
 
 on:
   push:
@@ -6,69 +6,42 @@ on:
       - master
 
 jobs:
-  reload:
+  deploy:
+    name: Deploy to EC2
     runs-on: ubuntu-latest
 
     steps:
-    # Checkout the repository using PAT for authentication
-    - name: Checkout Code
+    - name: Checkout repository
       uses: actions/checkout@v3
+
+    - name: Set up SSH
+      uses: webfactory/ssh-agent@v0.5.3
       with:
-        token: ${{ secrets.PAT_TOKEN }}
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-    # Deploy to Server (reload app)
-    - name: Reload Application
-      env:
-        HOST: ${{ secrets.SERVER_HOST }}
-        USER: ${{ secrets.SERVER_USER }}
-        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+    - name: Update EC2 instance and reload application
       run: |
-        mkdir -p ~/.ssh
-        echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan -H $HOST >> ~/.ssh/known_hosts
+        ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.SERVER_HOST }} << 'EOF'
+          set -e
 
-        # Test SSH connection
-        if ! ssh -i ~/.ssh/id_rsa $USER@$HOST "exit"; then
-          echo "SSH connection failed"
-          exit 1
-        fi
+          echo "Navigating to the project directory..."
+          cd /var/www/PostInvest-Pro || { echo "Error: Project directory not found."; exit 1; }
 
-        ssh -i ~/.ssh/id_rsa $USER@$HOST << EOF
-          cd /var/www/PostInvest-Pro
-          
-          # Source nvm to ensure node, npm, and pm2 are available
-          export NVM_DIR="\$HOME/.nvm"
-          [ -s "\$NVM_DIR/nvm.sh" ] && \. "\$NVM_DIR/nvm.sh"  # This loads nvm
-          nvm use v22.13.1  # Ensure the correct Node.js version is used
+          echo "Pulling latest changes from the repository..."
+          git reset --hard || { echo "Error: Failed to reset repository."; exit 1; }
+          git pull https://${{ secrets.PAT_TOKEN }}@github.com/hariharan2604/PostInvest-Pro.git || { echo "Error: Failed to pull latest changes."; exit 1; }
 
-          # Ensure node, npm, and pm2 are available
-          if ! command -v node &> /dev/null; then
-            echo "Node.js could not be found, installing..."
-            sudo apt update
-            sudo apt install -y nodejs npm
-          fi
+          echo "Installing dependencies..."
+          npm install || { echo "Error: Failed to install dependencies."; exit 1; }
 
-          if ! command -v pm2 &> /dev/null; then
-            echo "pm2 could not be found, installing..."
-            sudo npm install -g pm2
-          fi
+          echo "Updating env.."
+          sudo cp .env.production .env
 
-          # Pull the latest changes
-          git pull https://${USER}:${{ secrets.PAT_TOKEN }}@github.com/hariharan2604/PostInvest-Pro.git
-          pwd
-          node --version
-          npm install
+          echo "Running database migrations..."
+          npx sequelize-cli db:migrate || { echo "Error: Database migration failed."; exit 1; }
 
-          # Rename .env.production to .env
-          if [ -f .env.production ]; then
-            mv .env.production .env
-          else
-            echo ".env.production not found, skipping rename."
-          fi
-
-          # Reload the application with pm2
-          pm2 start ecosystem.config.cjs || pm2 restart ecosystem.config.cjs
-          pm2 reload all
+          echo "Reloading PM2 process..."
+          pm2 reload all || { echo "Error: Failed to reload PM2 process."; exit 1; }
           sudo service nginx restart
+          echo "Deployment complete!"
         EOF
