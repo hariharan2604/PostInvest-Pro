@@ -36,7 +36,7 @@ jobs:
           nvm use --lts || { echo "Error: Failed to use LTS version of Node.js."; exit 1; }
 
           echo "Installing dependencies..."
-          npm install || { echo "Error: Failed to install dependencies."; exit 1; }
+          yarn install || { echo "Error: Failed to install dependencies."; exit 1; }
 
           echo "Updating env.."
           sudo cp .env.production .env
