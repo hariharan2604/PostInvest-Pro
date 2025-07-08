@@ -141,10 +141,11 @@ export default class CustomerController {
                 zip,
                 agent_id,
                 relationship,
-                relation_id
+                relation_id,
+                cif
             } = req.body;
             let relatedCustomerId = relation_id;
-            if (relation_id == null) {
+            if (relation_id == null || relation_id == '') {
                 const createdCustomer = await Customer.create({
                     name,
                     dob: dateObj(dob),
@@ -158,7 +159,7 @@ export default class CustomerController {
                     state,
                     zip,
                     agent_id,
-                    cif: null,
+                    cif: cif || null,
                 });
                 relatedCustomerId = createdCustomer.id;
             }
@@ -190,12 +191,13 @@ export default class CustomerController {
     async getCustomers(req, res) {
         try {
             const { name, mobile, email } = req.body;
-            let whereData = {};
+            let whereData = { agent_id: req.user.userId };
             if (name) {
                 whereData.name = {
                     [Op.like]: `%${name}%`
                 };
             }
+
             if (mobile) {
                 whereData.mobile = {
                     [Op.like]: `%${mobile}%`
@@ -206,7 +208,7 @@ export default class CustomerController {
                     [Op.like]: `%${email}%`
                 };
             }
-            const { count, rows } = await Customer.findAndCountAll({ attributes: ['id', 'name'], where: whereData });
+            const { count, rows } = await Customer.findAndCountAll({ attributes: ['id', 'name', 'mobile', 'email'], where: whereData });
 
             if (count > 0) {
                 const customers = rows.map(row => row.toJSON());
@@ -263,6 +265,7 @@ export default class CustomerController {
                     const status = await SchemeDetail.findByPk(investment.scheme_id);
                     delete investment.scheme_id
                     investment.scheme_code = status.scheme_code;
+                    investment.scheme_name = status.scheme_name;
                 }
                 return res.json(createApiResponse(customers, 200));
             }
@@ -271,7 +274,6 @@ export default class CustomerController {
                 return res.json(createApiResponse(data, 400));
             }
         } catch (error) {
-            console.log('error :207', error);
             let data = { message: 'Error getting Customer Detail', errmsg: error }
             return res.json(createApiResponse(data, 500));
         }
