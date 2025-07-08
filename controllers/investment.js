@@ -16,7 +16,6 @@ export default class InvestmentController {
                 scheme_id,
                 investment_amount,
                 tenure,
-                installment_amount,
                 investment_date,
                 status_id
             } = req.body;
@@ -42,13 +41,13 @@ export default class InvestmentController {
                     scheme_id,
                     investment_amount,
                     tenure,
-                    installment_amount,
+                    installment_amount: investment_amount / tenure,
                     investment_date: investment_created_date,
                     next_installment_due: next_due,
                     status_id
                 });
 
-                let data = { message: 'Investment Created' ,createdInvestment}
+                let data = { message: 'Investment Created', createdInvestment }
                 return res.json(createApiResponse(data, 201));
             }
         } catch (error) {
@@ -62,7 +61,7 @@ export default class InvestmentController {
             const { investment_acc_no } = req.body;
             const { count, rows } = await Investment.findAndCountAll({
                 where: {
-                    investment_acc_no:investment_acc_no
+                    investment_acc_no: investment_acc_no
                 },
                 attributes: { exclude: ['createdAt', 'updatedAt'] },
                 include:
@@ -131,6 +130,24 @@ export default class InvestmentController {
         } catch (error) {
             console.log('error :115', error);
             let data = { message: 'Error getting Investments', errmsg: error }
+            return res.json(createApiResponse(data, 500));
+        }
+    }
+
+    async getSchemes(req, res) {
+        try {
+            const { count, rows } = await SchemeDetail.findAndCountAll({
+                attributes: ['id', 'scheme_name'],
+            });
+            if (count > 0) {
+                const scheme_detail = rows.map(row => row.toJSON());
+                return res.json(createApiResponse({ count, scheme_detail }, 200));
+            }
+            else {
+                return res.json(createApiResponse({ count }, 200));
+            }
+        } catch (error) {
+            let data = { message: 'Error Fetching Scheme Detail', errmsg: error }
             return res.json(createApiResponse(data, 500));
         }
     }
