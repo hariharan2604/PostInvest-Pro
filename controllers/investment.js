@@ -2,6 +2,7 @@ import { Op, Sequelize } from 'sequelize';
 import { createApiResponse } from '../utilities/httpResponse.js';
 import { dateObj } from '../utilities/dateFormatter.js'
 import '../models/investment/InvestmentAssociation.js';
+import '../models/customer/CustomerAssociation.js';
 import Investment from '../models/investment/Investment.js';
 import InvestmentStatus from '../models/investment/InvestmentStatus.js';
 import InvestmentDetail from '../models/investment/InvestmentDetail.js';
@@ -58,55 +59,91 @@ export default class InvestmentController {
     }
     async getInvestmentDetail(req, res) {
         try {
-            const { investment_acc_no } = req.body;
-            const { count, rows } = await Investment.findAndCountAll({
+            const { investmentId } = req.body;
+
+            const investment = await Investment.findOne({
                 where: {
-                    investment_acc_no: investment_acc_no
+                    id: investmentId
                 },
-                attributes: { exclude: ['createdAt', 'updatedAt'] },
-                include:
-                {
-                    model: InvestmentDetail,
-                },
+                attributes: [
+                    'id',
+                    'investment_acc_no',
+                    'investment_amount',
+                    'installment_amount',
+                    'investment_date',
+                    'tenure',
+                    [Sequelize.col('InvestmentStatus.investment_status_name'), 'investment_status'],
+                    [Sequelize.col('SchemeDetail.scheme_name'), 'scheme_name'],
+                    [Sequelize.col('SchemeDetail.scheme_code'), 'scheme_code'],
+                    [Sequelize.col('Customer.name'), 'name']
+                ],
+                include: [
+                    {
+                        model: InvestmentStatus,
+                        attributes: [],
+                    },
+                    {
+                        model: SchemeDetail,
+                        attributes: [],
+                    },
+                    {
+                        model: InvestmentDetail,
+                        attributes: [], 
+                    },
+                    {
+                        model: Customer,
+                        attributes: [] 
+                    }
+                ],
+                raw: true
             });
-            if (count > 0) {
-                const investment_detail = rows.map(row => row.toJSON());
-                return res.json(createApiResponse({ count, investment_detail }, 200));
+
+            if (investment) {
+                return res.json(createApiResponse(investment, 200));
             }
             else {
-                return res.json(createApiResponse({ count }, 200));
+                let data = { message: 'Investment Details not found' }
+                return res.json(createApiResponse(data, 400));
             }
         } catch (error) {
-            console.log('error :66', error);
             let data = { message: 'Error Fetching Investment Detail', errmsg: error }
             return res.json(createApiResponse(data, 500));
         }
     }
+
     async getInvestment(req, res) {
         try {
-            const { customer_id, investment_acc_no } = req.body;
-            let whereData = {};
-            if (customer_id) {
-                whereData.customer_id = {
-                    [Op.eq]: customer_id
-                }
-            }
-            if (investment_acc_no) {
-                whereData.investment_acc_no = {
-                    [Op.eq]: investment_acc_no
-                }
+            const { search } = req.body;
+
+            const customers = await Customer.findAll({
+                where: { agent_id: req.user.userId },
+                attributes: ['id'],
+            });
+
+            const customerIds = customers.map(c => c.id);
+            if (customerIds.length === 0) {
+                return res.json(createApiResponse({ count: 0, investments: [] }, 200));
             }
 
-            const { count, rows } = await Investment.findAndCountAll({
-                where: whereData,
-                attributes: {
-                    include: [
-                        [Sequelize.col('InvestmentStatus.investment_status_name'), 'investment_status'],
-                        [Sequelize.col('SchemeDetail.scheme_name'), 'scheme_name'],
-                        [Sequelize.col('SchemeDetail.scheme_code'), 'scheme_code']
-                    ],
-                    exclude: ['createdAt', 'updatedAt']
-                },
+            let investmentwhereData = {
+                customer_id: { [Op.in]: customerIds }
+            };
+
+            if (search) {
+                investmentwhereData[Op.or] = [
+                    { investment_acc_no: { [Op.like]: `%${search}%` } },
+                ];
+            }
+
+            const investmentResult = await Investment.findAndCountAll({
+                where: investmentwhereData,
+                attributes: [
+                    'id',
+                    'investment_acc_no',
+                    [Sequelize.col('InvestmentStatus.investment_status_name'), 'investment_status'],
+                    [Sequelize.col('SchemeDetail.scheme_name'), 'scheme_name'],
+                    [Sequelize.col('SchemeDetail.scheme_code'), 'scheme_code']
+                ],
                 include: [
                     {
                         model: InvestmentStatus,
@@ -119,13 +156,9 @@ export default class InvestmentController {
                 ]
             });
 
-            if (count > 0) {
-                const investments = rows.map(row => row.toJSON());
-                return res.json(createApiResponse({ count, investments }, 200));
-            }
-            else {
-                return res.json(createApiResponse({ count }, 400));
-            }
+            const investment = investmentResult.rows.map(row => row.toJSON());
+
+            return res.json(createApiResponse({ count: investmentResult.count, investment }, 200));
 
         } catch (error) {
             console.log('error :115', error);
@@ -133,6 +166,7 @@ export default class InvestmentController {
             return res.json(createApiResponse(data, 500));
         }
     }
+
 
     async getSchemes(req, res) {
         try {

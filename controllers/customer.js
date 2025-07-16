@@ -190,35 +190,34 @@ export default class CustomerController {
 
     async getCustomers(req, res) {
         try {
-            const { name, mobile, email } = req.body;
-            let whereData = { agent_id: req.user.userId };
-            if (name) {
-                whereData.name = {
-                    [Op.like]: `%${name}%`
-                };
+            const { search } = req.body;
+
+            let whereData = {
+                agent_id: req.user.userId,
+            };
+
+            if (search) {
+                whereData[Op.or] = [
+                    { name: { [Op.like]: `%${search}%` } },
+                    { mobile: { [Op.like]: `%${search}%` } },
+                    { email: { [Op.like]: `%${search}%` } },
+                    { cif: { [Op.like]: `%${search}%` } },
+                ];
             }
 
-            if (mobile) {
-                whereData.mobile = {
-                    [Op.like]: `%${mobile}%`
-                };
-            }
-            if (email) {
-                whereData.email = {
-                    [Op.like]: `%${email}%`
-                };
-            }
-            const { count, rows } = await Customer.findAndCountAll({ attributes: ['id', 'name', 'mobile', 'email'], where: whereData });
+            const { count, rows } = await Customer.findAndCountAll({
+                attributes: ['id', 'name', 'mobile', 'email', 'area'],
+                where: whereData
+            });
 
             if (count > 0) {
-                const customers = rows.map(row => row.toJSON());
-                return res.json(createApiResponse({ count, customers }, 200));
+                const customer = rows.map(row => row.toJSON());
+                return res.json(createApiResponse({ count, customer }, 200));
             }
             else {
                 return res.json(createApiResponse({ count }, 400));
             }
         } catch (error) {
-            console.log('error :135', error);
             let data = { message: 'Error getting Customer List', errmsg: error }
             return res.json(createApiResponse(data, 500));
         }
