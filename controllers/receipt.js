@@ -9,8 +9,12 @@ import SchemeDetail from '../models/investment/SchemeDetail.js';
 import ReceiptCollection from '../models/receipt/ReceiptCollection.js';
 import ReceiptDetail from '../models/receipt/ReceiptDetail.js';
 import ReceiptType from '../models/receipt/ReceiptType.js';
+import BankDetail from '../models/receipt/BankDetail.js';
 
 export default class ReceiptController {
+    static DEFAULT_INSTRUMENT_CLASS_ID = '9b6ce667-f95c-4675-b848-2ac107e4b92e';
+    static CHEQUE_RECEIPT_ID = 'a2b4f588-c31b-48a1-88d8-5d7958be432c';
+    static CASH_RECEIPT_ID = 'e35ad61e-2cb8-4110-b37c-dae78658521e';
     async addReceipt(req, res) {
         const {
             receipt_type_id,
@@ -21,44 +25,25 @@ export default class ReceiptController {
             bank_id,
             instrument_class_id,
             sb_acc_number,
-            receipt_details
         } = req.body;
 
         try {
+            const isChequeReceipt = receipt_type_id === ReceiptController.CHEQUE_RECEIPT_ID;
+            const isCashReceipt = receipt_type_id === ReceiptController.CASH_RECEIPT_ID;
 
-            const updatedReceiptDetails = await Promise.all(
-                receipt_details.map(async (receipt_detail) => {
-                    const installment = await Investment.findOne({
-                        where: { id: receipt_detail.investment_id },
-                        attributes: ['installment_amount']
-                    });
-                    const remittance_amount = installment.installment_amount * parseInt(receipt_detail.no_of_installments);
-
-                    return { ...receipt_detail, remittance_amount };
-                })
-            );
-
-
-            let denomination_total = updatedReceiptDetails.reduce((n, { remittance_amount }) => n + parseInt(remittance_amount), 0);
-
-            if (denomination_total != receipt_amount) {
-                let data = { message: 'Invalid denomination breakdown for the receipt' }
-                return res.json(createApiResponse(data, 400));
-            }
-
-
-            if (chq_number && cheque_date && bank_id && sb_acc_number && receipt_type_id == "a2b4f588-c31b-48a1-88d8-5d7958be432c") {
-                const existingCheque = await ReceiptCollection.findAll({
-                    where: {
-                        chq_number: {
-                            [Op.eq]: chq_number
-                        }
-                    }
-                });
-                if (existingCheque.length > 0) {
-                    let data = { message: 'Cheque number already exists' }
-                    return res.json(createApiResponse(data, 400));
+            if (isChequeReceipt) {
+                if (!chq_number || !cheque_date || !bank_id || !sb_acc_number) {
+                    return res.json(createApiResponse({ message: 'Missing cheque details' }, 400));
                 }
+
+                const existingCheque = await ReceiptCollection.findAll({
+                    where: { chq_number: { [Op.eq]: chq_number } }
+                });
+
+                if (existingCheque.length > 0) {
+                    return res.json(createApiResponse({ message: 'Cheque number already exists' }, 400));
+                }
+
                 const createdReceipt = await ReceiptCollection.create({
                     receipt_type_id,
                     receipt_date: Date.now(),
@@ -67,15 +52,14 @@ export default class ReceiptController {
                     chq_number,
                     cheque_date: dateObj(cheque_date),
                     bank_id,
-                    instrument_class_id: instrument_class_id != "" ? instrument_class_id : '9b6ce667-f95c-4675-b848-2ac107e4b92e',
-                    sb_acc_number
+                    instrument_class_id: instrument_class_id || DEFAULT_INSTRUMENT_CLASS_ID,
+                    sb_acc_number,
                 });
-                let receipt_detail = await ReceiptController.addReceiptDetail(updatedReceiptDetails, createdReceipt.id);
 
-                let data = { message: 'Receipt Created', createdReceipt, receipt_detail }
-                return res.json(createApiResponse(data, 201));
+                return res.json(createApiResponse({ message: 'Receipt Created', createdReceipt }, 201));
             }
-            else if (receipt_type_id == "e35ad61e-2cb8-4110-b37c-dae78658521e") {
+
+            if (isCashReceipt) {
                 const createdReceipt = await ReceiptCollection.create({
                     receipt_type_id,
                     receipt_date: Date.now(),
@@ -84,25 +68,163 @@ export default class ReceiptController {
                     chq_number: null,
                     cheque_date: null,
                     bank_id: null,
-                    instrument_class_id: '9b6ce667-f95c-4675-b848-2ac107e4b92e',
-                    sb_acc_number: null
+                    instrument_class_id: DEFAULT_INSTRUMENT_CLASS_ID,
+                    sb_acc_number: null,
                 });
-                let receipt_detail = await ReceiptController.addReceiptDetail(updatedReceiptDetails, createdReceipt.id);
 
-                let data = { message: 'Receipt Created', createdReceipt, receipt_detail }
-                return res.json(createApiResponse(data, 201));
+                return res.json(createApiResponse({ message: 'Receipt Created', createdReceipt }, 201));
+            }
+
+            return res.json(createApiResponse({ message: 'Inappropriate data' }, 400));
+
+        } catch (error) {
+
+            console.log("🚀 ~ ReceiptController ~ addReceipt ~ error:", error);
+
+            return res.json(createApiResponse({
+                message: 'Receipt Addition failed',
+                errmsg: error.message || error
+            }, 500));
+        }
+    }
+
+    async updateReceipt(req, res) {
+        const {
+            id,
+            receipt_amount,
+            chq_number,
+            cheque_date,
+            bank_id,
+            instrument_class_id,
+            sb_acc_number,
+        } = req.body;
+
+        try {
+            const invalidCheque = await ReceiptCollection.findOne({ where: { chq_number: chq_number, bank_id: bank_id, sb_acc_number: sb_acc_number } });
+
+            if (invalidCheque) {
+                let data = { message: 'Invalid Cheque Details.' }
+                return res.json(createApiResponse(data, 400));
+            }
+
+            const existingReceipt = await ReceiptCollection.findByPk(id);
+            if (existingReceipt) {
+                const updatedReceipt = await existingReceipt.update({
+                    chq_number,
+                    bank_id,
+                    instrument_class_id,
+                    sb_acc_number,
+                    receipt_amount: receipt_amount,
+                    cheque_date: cheque_date ? dateObj(cheque_date) : null
+                });
+                let data = { message: 'Receipt Updation successfull', updatedReceipt: updatedReceipt.toJSON() };
+                return res.json(createApiResponse(data, 200));
             }
             else {
-                let data = { message: 'Inappropriate data' }
+                let data = { message: 'Receipt Not found' }
                 return res.json(createApiResponse(data, 400));
             }
 
         } catch (error) {
-            console.log('error :39', error);
-            let data = { message: 'Receipt Addition failed', errmsg: error }
+            console.log('error :101', error);
+            let data = { message: 'Receipt Updation failed', errmsg: error }
             return res.json(createApiResponse(data, 500));
         }
     }
+
+    async addReceiptsBulk(req, res) {
+        const { entries = [] } = req.body;
+
+        if (!Array.isArray(entries) || entries.length === 0) {
+            return res.json(createApiResponse({ message: 'No receipt entries provided' }, 400));
+        }
+
+        const responses = [];
+
+        for (let index = 0; index < entries.length; index++) {
+            const entry = entries[index];
+            const {
+                receipt_type_id,
+                customer_id,
+                receipt_amount,
+                chq_number,
+                cheque_date,
+                bank_id,
+                instrument_class_id,
+                sb_acc_number,
+            } = entry;
+
+            try {
+                const isChequeReceipt = receipt_type_id === ReceiptController.CHEQUE_RECEIPT_ID;
+                const isCashReceipt = receipt_type_id === ReceiptController.CASH_RECEIPT_ID;
+
+                if (isChequeReceipt) {
+                    if (!chq_number || !bank_id || !sb_acc_number) {
+                        throw new Error("Missing cheque details");
+                    }
+
+                    const existing = await ReceiptCollection.findOne({
+                        where: { chq_number: chq_number, bank_id: bank_id, sb_acc_number: sb_acc_number }
+                    });
+
+                    if (existing) {
+                        throw new Error(`Cheque number ${chq_number} already exists`);
+                    }
+
+                    const created = await ReceiptCollection.create({
+                        receipt_type_id,
+                        receipt_date: Date.now(),
+                        customer_id,
+                        receipt_amount: receipt_amount || "",
+                        chq_number,
+                        cheque_date: cheque_date ? dateObj(cheque_date) : null,
+                        bank_id,
+                        instrument_class_id: instrument_class_id || ReceiptController.DEFAULT_INSTRUMENT_CLASS_ID,
+                        sb_acc_number,
+                    });
+
+                    responses.push({ index, success: true, data: created });
+
+                } else if (isCashReceipt) {
+                    const created = await ReceiptCollection.create({
+                        receipt_type_id,
+                        receipt_date: Date.now(),
+                        customer_id,
+                        receipt_amount,
+                        chq_number: null,
+                        cheque_date: null,
+                        bank_id: null,
+                        instrument_class_id: ReceiptController.DEFAULT_INSTRUMENT_CLASS_ID,
+                        sb_acc_number: null,
+                    });
+
+                    responses.push({ index, success: true, data: created });
+
+                } else {
+                    throw new Error(`Invalid receipt type ID`);
+                }
+
+            } catch (error) {
+                responses.push({
+                    index,
+                    success: false,
+                    error: error.message || 'Unknown error',
+                    chq_number: chq_number || null
+                });
+            }
+        }
+
+        return res.json(createApiResponse({
+            message: "Bulk receipt processing completed",
+            summary: {
+                total: entries.length,
+                success: responses.filter(r => r.success).length,
+                failed: responses.filter(r => !r.success).length,
+            },
+            responses: responses,
+        }, 207));
+    }
+
 
     static async addReceiptDetail(receipt_details, receipt_collection_id) {
         try {
@@ -186,7 +308,7 @@ export default class ReceiptController {
                     [Sequelize.col('Investment.investment_acc_no'), 'investment_acc_no'],
                     [Sequelize.col('ReceiptCollection.ReceiptType.receipt_type_name'), 'receipt_type_name'],
                     [Sequelize.fn('COUNT', Sequelize.col('investment_id')), 'receipt_count'],
-                    [Sequelize.fn('SUM', Sequelize.col('no_of_installments')),'no_of_installments']
+                    [Sequelize.fn('SUM', Sequelize.col('no_of_installments')), 'no_of_installments']
                 ],
                 where: whereData,
                 include: [
@@ -234,6 +356,24 @@ export default class ReceiptController {
         } catch (error) {
             console.log('error :39', error);
             let data = { message: 'Receipt Detail Fetch failed', errmsg: error };
+            return res.json(createApiResponse(data, 500));
+        }
+    }
+    async getBanks(req, res) {
+        try {
+            const { count, rows } = await BankDetail.findAndCountAll({
+                attributes: ['id', 'bank_name', 'code'],
+                order: ['bank_name']
+            });
+            if (count > 0) {
+                const bank_detail = rows.map(row => row.toJSON());
+                return res.json(createApiResponse({ count, bank_detail }, 200));
+            }
+            else {
+                return res.json(createApiResponse({ count }, 200));
+            }
+        } catch (error) {
+            let data = { message: 'Error Fetching Scheme Detail', errmsg: error }
             return res.json(createApiResponse(data, 500));
         }
     }

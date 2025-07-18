@@ -171,7 +171,7 @@ export default class InvestmentController {
     async getSchemes(req, res) {
         try {
             const { count, rows } = await SchemeDetail.findAndCountAll({
-                attributes: ['id', 'scheme_name'],
+                attributes: ['id', 'scheme_name', 'scheme_code'],
             });
             if (count > 0) {
                 const scheme_detail = rows.map(row => row.toJSON());

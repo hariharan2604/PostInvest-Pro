@@ -8,7 +8,10 @@ const receiptController = new Receipt();
 
 router.use(verifyAccessToken);
 
-router.post('/add', receiptController.addReceipt);
+router.get('/banks', receiptController.getBanks);
+// router.post('/add', receiptController.addReceipt);
+router.post('/update', receiptController.updateReceipt);
+router.post('/bulk-add', receiptController.addReceiptsBulk);
 router.post('/get', receiptController.getReceipt);
 router.post('/get/detail', receiptController.getReceiptDetail);
 
