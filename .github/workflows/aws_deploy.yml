@@ -33,6 +33,7 @@ jobs:
       run: |
         echo "${{ secrets.ENV_FILE }}" > .env
         scp -i ec2-key.pem -o StrictHostKeyChecking=no .env ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/app/.env
+        scp -i ec2-key.pem -o StrictHostKeyChecking=no compose.yaml ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/app/compose.yaml
 
     - name: Deploy on EC2
       run: |
