@@ -18,7 +18,6 @@ module.exports = {
         updatedAt: new Date()
       }
     ]
-    await queryInterface.bulkInsert('InstrumentClass', receipt_type, {});
     for (const item of data) {
       const exists = await queryInterface.rawSelect(
         tableName,
