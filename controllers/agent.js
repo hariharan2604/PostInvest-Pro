@@ -5,7 +5,6 @@ import { createApiResponse } from '../utilities/httpResponse.js';
 import { Agent, Credentials } from '../models/agent/AgentAssociation.js';
 import { getKey, setKey, deleteKey } from '../db/redisClient.js';
 export default class Auth {
-    // Generate Access Token (short-lived token)
     static generateAccessToken(payload) {
         return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' }); // 15-minute expiry
     }
@@ -15,26 +14,21 @@ export default class Auth {
         return jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' }); // 7-day expiry
     }
 
-    // Refresh the access token using the refresh token
     async refreshAccessToken(req, res) {
-        const refreshToken = req.header('Authorization')?.split(' ')[1]; // Extract refresh token from header
+        const refreshToken = req.header('Authorization')?.split(' ')[1]; 
 
         if (!refreshToken) {
             return res.json(createApiResponse({ message: 'Refresh token missing' }, 401));
         }
 
         try {
-            // Verify refresh token
             const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
-
-            // Find the agent by userId and check the refresh token
             const user = await getKey(decoded.userId);
 
             if (!user) {
                 return res.json(createApiResponse({ message: 'Invalid refresh token' }, 403));
             }
 
-            // Generate new access token
             const newAccessToken = Auth.generateAccessToken({ userId: decoded.userId });
 
             return res.json(createApiResponse({ accessToken: newAccessToken }, 200));
@@ -43,12 +37,10 @@ export default class Auth {
         }
     }
 
-    // Login user and generate tokens
     async login(req, res) {
         try {
             const { username, password } = req.body;
 
-            // Find the user (credentials table joined with agent details)
             const user = await Credentials.findOne({
                 where: { username },
                 include: {
@@ -66,7 +58,6 @@ export default class Auth {
                 return res.json(createApiResponse({ message: 'Authentication failed' }, 400));
             }
 
-            // Compare password with hashed password stored in DB
             const passwordMatch = bcrypt.compareSync(password, user.password);
 
             if (!passwordMatch) {
@@ -75,7 +66,6 @@ export default class Auth {
 
             const payload = { userId: user.agent_id }; 
 
-            // Generate access and refresh tokens
             const accessToken = Auth.generateAccessToken(payload);
             const refreshToken = Auth.generateRefreshToken(payload);
 
@@ -96,7 +86,6 @@ export default class Auth {
         }
     }
 
-    // Logout user and remove the refresh token from the database
     async logout(req, res) {
         try {
             const refreshToken = req.header('Authorization')?.split(' ')[1]; // Extract refresh token from header
@@ -106,7 +95,6 @@ export default class Auth {
                 return res.json(createApiResponse({ message: 'Refresh token missing' }, 400));
             }
 
-            // Invalidate the refresh token by setting it to null in the database
             const result = await deleteKey(decoded.userId);
             if (result == 0) {
                 return res.json(createApiResponse({ message: 'Logout failed' }, 400));
@@ -117,12 +105,10 @@ export default class Auth {
         }
     }
 
-    // Register a new user and store the refresh token in DB
     async register(req, res) {
         try {
             const { name, password, mobile, email, gender, dob, address1, address2, area, state, city, zip } = req.body;
 
-            // Check if mobile or email already exists
             const existingUser = await Agent.findAll({
                 where: {
                     [Op.or]: [{
@@ -152,7 +138,6 @@ export default class Auth {
                     zip
                 });
 
-                // Store agent's credentials
                 await Credentials.create({
                     username: agent.mobile,
                     password: hashedPassword,
