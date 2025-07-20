@@ -6,6 +6,7 @@ const investmentController = new Investment();
 
 router.use(verifyAccessToken);
 
+router.get('/schemes', investmentController.getSchemes);
 router.post('/add', investmentController.addInvestment);
 router.post('/get', investmentController.getInvestment);
 router.post('/detail', investmentController.getInvestmentDetail);

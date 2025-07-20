@@ -34,7 +34,7 @@ module.exports = {
       },
       receipt_amount: {
         type: Sequelize.FLOAT,
-        allowNull: false,
+        allowNull: true,
       },
       chq_number: {
         type: Sequelize.STRING,

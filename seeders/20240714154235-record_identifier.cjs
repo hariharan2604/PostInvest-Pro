@@ -1,10 +1,11 @@
 'use strict';
-const { v4: uuidv4 } = require('uuid');
 
-/** @type {import('sequelize-cli').Migration} */
+/** @type {import('sequelize-cli').Seeder} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    const record_identifier = [
+    const tableName = 'RecordIdentifier';
+
+    const data = [
       {
         id: "98a1c6f0-d8c3-4a37-a4d4-63ca6c43091b",
         record_identifier_name: "rebate",
@@ -23,8 +24,21 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date()
       }
-    ]
-    await queryInterface.bulkInsert('RecordIdentifier', record_identifier, {});
+    ];
+
+    for (const item of data) {
+      const exists = await queryInterface.rawSelect(
+        tableName,
+        {
+          where: { id: item.id }
+        },
+        ['id']
+      );
+
+      if (!exists) {
+        await queryInterface.bulkInsert(tableName, [item], {});
+      }
+    }
   },
 
   async down(queryInterface, Sequelize) {

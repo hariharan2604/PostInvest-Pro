@@ -1,42 +1,25 @@
-# syntax=docker/dockerfile:1
-
-# Comments are provided throughout this file to help you get started.
-# If you need more help, visit the Dockerfile reference guide at
-# https://docs.docker.com/go/dockerfile-reference/
-
-# Want to help us make this template better? Share your feedback here: https://forms.gle/ybq9Krt8jtBL3iCk7
-
 ARG NODE_VERSION=22.5.1
-
 FROM node:${NODE_VERSION}-alpine
 
-# Use production node environment by default.
-ENV NODE_ENV=development
+ENV NODE_ENV=production
 
 WORKDIR /usr/src/app
 
-# Install PM2 globally
-RUN npm install -g pm2
+# Install PM2 and CLI tools
+RUN yarn global add pm2 sequelize-cli
 
-# Download dependencies as a separate step to take advantage of Docker's caching.
-# Leverage a cache mount to /root/.npm to speed up subsequent builds.
-# Leverage a bind mounts to package.json and package-lock.json to avoid having to copy them into
-# into this layer.
-RUN --mount=type=bind,source=package.json,target=package.json \
-    --mount=type=bind,source=package-lock.json,target=package-lock.json \
-    --mount=type=cache,target=/root/.npm \
-    npm ci --omit=dev
+# Copy dependency files and install only production dependencies
+COPY package.json yarn.lock ./
+RUN yarn install --production
 
-# Run the application as a non-root user.
-USER node
-
-# Copy the rest of the source files into the image.
+# Copy the app source code
 COPY . .
 
-# Expose the port that the application listens on.
+# Expose the app port
 EXPOSE 3000
 
-# Run database migrations and seeds before starting the application.
-# CMD ["sh","-c","npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all"]
+# Use non-root user
+USER node
 
-CMD ["sh","-c","pm2 start app.js && pm2 logs"]
+# Run DB migrations and then start the app
+CMD ["sh", "-c", "yarn sequelize db:migrate && yarn sequelize db:seed:all && pm2-runtime app.js"]

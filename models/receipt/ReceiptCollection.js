@@ -26,7 +26,7 @@ ReceiptCollection.init(
         },
         receipt_amount: {
             type: DataTypes.FLOAT,
-            allowNull: false,
+            allowNull: true,
         },
         chq_number: {
             type: DataTypes.STRING,
