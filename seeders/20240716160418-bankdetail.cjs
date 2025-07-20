@@ -1,11 +1,9 @@
-// seeders/20220716000000-seed-banks.js
 'use strict';
-const { v4: uuidv4 } = require('uuid');
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-
-    const banks = [
+    const tableName = 'BankDetail';
+    const data = [
       {
         "id": "bff4ff8f-b105-4e9a-aad3-a74222b53288",
         "code": "AACX",
@@ -10550,7 +10548,19 @@ module.exports = {
       }
     ]
 
-    await queryInterface.bulkInsert('BankDetail', banks, {});
+    for (const item of data) {
+      const exists = await queryInterface.rawSelect(
+        tableName,
+        {
+          where: { id: item.id }
+        },
+        ['id']
+      );
+
+      if (!exists) {
+        await queryInterface.bulkInsert(tableName, [item], {});
+      }
+    }
   },
 
   down: async (queryInterface, Sequelize) => {
