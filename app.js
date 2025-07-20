@@ -10,8 +10,6 @@ import investmentRoutes from './routes/investment.js';
 import receiptRoutes from './routes/receipt.js';
 
 import { createApiResponse } from './utilities/httpResponse.js';
-import { verifyAccessToken } from './middlewares/authMiddleware.js';
-
 const app = express();
 
 sequelize.sync();
@@ -22,7 +20,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.get("/", (req, res) => {
-  res.send("hello new 23-01-2025 4:00");
+  let test = {
+    message: "Requested resource is not found.."
+  };
+  res.json(createApiResponse(test, 200));
 })
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/customer', customerRoutes);
