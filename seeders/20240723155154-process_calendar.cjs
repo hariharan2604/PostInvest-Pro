@@ -119,7 +119,6 @@ module.exports = {
         updatedAt: new Date()
       },
     ]
-    await queryInterface.bulkInsert('ProcessCalendar', process_calendar, {});
     for (const item of data) {
       const exists = await queryInterface.rawSelect(
         tableName,
