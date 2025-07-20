@@ -22,4 +22,4 @@ EXPOSE 3000
 USER node
 
 # Run DB migrations and then start the app
-CMD ["sh", "-c", "yarn sequelize db:migrate && yarn sequelize db:seed:all && pm2-runtime app.js"]
+CMD ["sh", "-c", "yarn sequelize-cli db:migrate && yarn sequelize-cli db:seed:all && pm2-runtime app.js"]
