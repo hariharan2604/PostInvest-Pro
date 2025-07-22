@@ -4,6 +4,7 @@ import { Op, Sequelize } from 'sequelize';
 import { createApiResponse } from '../utilities/httpResponse.js';
 import { Agent, Credentials } from '../models/agent/AgentAssociation.js';
 import { getKey, setKey, deleteKey } from '../db/redisClient.js';
+import { dateObj } from '../utilities/dateFormatter.js';
 export default class Auth {
     static generateAccessToken(payload) {
         return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' }); // 15-minute expiry
@@ -15,7 +16,7 @@ export default class Auth {
     }
 
     async refreshAccessToken(req, res) {
-        const refreshToken = req.header('Authorization')?.split(' ')[1]; 
+        const refreshToken = req.header('Authorization')?.split(' ')[1];
 
         if (!refreshToken) {
             return res.json(createApiResponse({ message: 'Refresh token missing' }, 401));
@@ -64,7 +65,7 @@ export default class Auth {
                 return res.json(createApiResponse({ message: 'Authentication failed' }, 401));
             }
 
-            const payload = { userId: user.agent_id }; 
+            const payload = { userId: user.agent_id };
 
             const accessToken = Auth.generateAccessToken(payload);
             const refreshToken = Auth.generateRefreshToken(payload);
@@ -129,7 +130,7 @@ export default class Auth {
                     mobile,
                     email,
                     gender,
-                    dob,
+                    dob: dateObj(dob),
                     address1,
                     address2,
                     area,
@@ -147,6 +148,9 @@ export default class Auth {
                 return res.json(createApiResponse({ message: 'User Registration successful' }, 200));
             }
         } catch (error) {
+
+            console.log("🚀 ~ Auth ~ register ~ error:", error);
+
             return res.json(createApiResponse({ message: 'Registration failed' }, 500));
         }
     }
