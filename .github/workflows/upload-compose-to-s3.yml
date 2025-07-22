@@ -1,0 +1,28 @@
+name: Upload compose.yaml to S3
+
+on:
+  workflow_dispatch:
+
+env:
+  FILE_NAME: compose.yaml
+  BUCKET_NAME: postinvest-deploy-assets
+  DEST_PATH: deployments/compose.yaml
+
+jobs:
+  upload-to-s3:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v3
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ap-south-1 
+
+    - name: Upload compose.yaml to S3
+      run: |
+        aws s3 cp $FILE_NAME s3://$BUCKET_NAME/$DEST_PATH --acl private
