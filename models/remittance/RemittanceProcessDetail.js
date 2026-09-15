@@ -1,79 +1,78 @@
-import { DataTypes, Model } from 'sequelize';
-import sequelize from '../../db/connection.js';
-import { v4 as uuidv4 } from 'uuid';
+import { DataTypes, Model } from "sequelize";
+import sequelize from "../../db/connection.js";
+import { v7 as uuidv7 } from "uuid";
 
-class RemittanceProcessDetail extends Model { }
+class RemittanceProcessDetail extends Model {}
 
 RemittanceProcessDetail.init(
-    {
-        id: {
-            type: DataTypes.UUID,
-            defaultValue: uuidv4,
-            primaryKey: true,
-            allowNull: false,
-        },
-        remittance_process_id: {
-            type: DataTypes.UUID,
-            allowNull: false,
-        },
-        process_calendar_id: {
-            type: DataTypes.UUID,
-            allowNull: false,
-        },
-        customer_id: {
-            type: DataTypes.UUID,
-            allowNull: false,
-        },
-        investment_id: {
-            type: DataTypes.UUID,
-            allowNull: false,
-        },
-        receipt_detail_id: {
-            type: DataTypes.UUID,
-            allowNull: true,
-        },
-        receipt_type_id: {
-            type: DataTypes.UUID,
-            allowNull: true,
-        },
-        receipt_collection_id: {
-            type: DataTypes.UUID,
-            allowNull: true,
-        },
-        remittance_amount: {
-            type: DataTypes.FLOAT,
-            allowNull: true,
-        },
-        no_of_installments: {
-            type: DataTypes.INTEGER,
-            allowNull: true,
-        },
-        record_identifier: {
-            type: DataTypes.UUID,
-            allowNull: false,
-        },
-        cheque_number: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
-        investment_acc_number: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        bank_name: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
-        sb_acc_number: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
-
+  {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: uuidv7,
+      primaryKey: true,
+      allowNull: false,
     },
-    {
-        sequelize,
-        modelName: 'RemittanceProcessDetail',
-    }
+    remittance_process_id: {
+      type: DataTypes.UUID,
+      allowNull: false,
+    },
+    process_calendar_id: {
+      type: DataTypes.UUID,
+      allowNull: false,
+    },
+    customer_id: {
+      type: DataTypes.UUID,
+      allowNull: false,
+    },
+    investment_id: {
+      type: DataTypes.UUID,
+      allowNull: false,
+    },
+    receipt_detail_id: {
+      type: DataTypes.UUID,
+      allowNull: true,
+    },
+    receipt_type_id: {
+      type: DataTypes.UUID,
+      allowNull: true,
+    },
+    receipt_collection_id: {
+      type: DataTypes.UUID,
+      allowNull: true,
+    },
+    remittance_amount: {
+      type: DataTypes.FLOAT,
+      allowNull: true,
+    },
+    no_of_installments: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    record_identifier: {
+      type: DataTypes.UUID,
+      allowNull: false,
+    },
+    cheque_number: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    investment_acc_number: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    bank_name: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    sb_acc_number: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+  },
+  {
+    sequelize,
+    modelName: "RemittanceProcessDetail",
+  },
 );
 
 // RemittanceProcessDetail.belongsTo(RemittanceProcess, { foreignKey: 'remittance_process_id' })

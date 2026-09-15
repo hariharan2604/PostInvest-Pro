@@ -1,11 +1,11 @@
-'use strict';
+"use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('RecordIdentifier', {
+    await queryInterface.createTable("RecordIdentifier", {
       id: {
         type: Sequelize.UUID,
         primaryKey: true,
-        defaultValue: Sequelize.UUIDV4,
+        defaultValue: Sequelize.UUIDV7,
         allowNull: false,
       },
       record_identifier_name: {
@@ -25,6 +25,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('RecordIdentifier');
-  }
+    await queryInterface.dropTable("RecordIdentifier");
+  },
 };

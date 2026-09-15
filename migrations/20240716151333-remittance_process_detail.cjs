@@ -1,10 +1,10 @@
-'use strict';
+"use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('RemittanceProcessDetail', {
+    await queryInterface.createTable("RemittanceProcessDetail", {
       id: {
         type: Sequelize.UUID,
-        defaultValue: Sequelize.UUIDV4,
+        defaultValue: Sequelize.UUIDV7,
         primaryKey: true,
         allowNull: false,
       },
@@ -12,71 +12,71 @@ module.exports = {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
-          model: 'RemittanceProcess', // name of the target model (Agents)
-          key: 'id',
+          model: "RemittanceProcess", // name of the target model (Agents)
+          key: "id",
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE'
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       process_calendar_id: {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
-          model: 'ProcessCalendar', // name of the target model (Agents)
-          key: 'id',
+          model: "ProcessCalendar", // name of the target model (Agents)
+          key: "id",
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE'
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       customer_id: {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
-          model: 'Customer', // name of the target model (Agents)
-          key: 'id',
+          model: "Customer", // name of the target model (Agents)
+          key: "id",
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE'
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       investment_id: {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
-          model: 'Investment', // name of the target model (Agents)
-          key: 'id',
+          model: "Investment", // name of the target model (Agents)
+          key: "id",
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE'
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       receipt_detail_id: {
         type: Sequelize.UUID,
         allowNull: true,
         references: {
-          model: 'ReceiptDetail', // name of the target model (Agents)
-          key: 'id',
+          model: "ReceiptDetail", // name of the target model (Agents)
+          key: "id",
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE'
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       receipt_type_id: {
         type: Sequelize.UUID,
         allowNull: true,
         references: {
-          model: 'ReceiptType', // name of the target model (Agents)
-          key: 'id',
+          model: "ReceiptType", // name of the target model (Agents)
+          key: "id",
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE'
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       receipt_collection_id: {
         type: Sequelize.UUID,
         allowNull: true,
         references: {
-          model: 'ReceiptCollection', // name of the target model (Agents)
-          key: 'id',
+          model: "ReceiptCollection", // name of the target model (Agents)
+          key: "id",
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE'
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       remittance_amount: {
         type: Sequelize.FLOAT,
@@ -90,11 +90,11 @@ module.exports = {
         type: Sequelize.UUID,
         allowNull: true,
         references: {
-          model: 'RecordIdentifier', // name of the target model (Agents)
-          key: 'id',
+          model: "RecordIdentifier", // name of the target model (Agents)
+          key: "id",
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE'
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       cheque_number: {
         type: Sequelize.STRING,
@@ -125,6 +125,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('RemittanceProcessDetail');
-  }
+    await queryInterface.dropTable("RemittanceProcessDetail");
+  },
 };
