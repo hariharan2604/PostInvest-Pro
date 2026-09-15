@@ -1,10 +1,10 @@
-'use strict';
+"use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('InvestmentDetail', {
+    await queryInterface.createTable("InvestmentDetail", {
       id: {
         type: Sequelize.UUID,
-        defaultValue: Sequelize.UUIDV4,
+        defaultValue: Sequelize.UUIDV7,
         primaryKey: true,
         allowNull: false,
       },
@@ -12,11 +12,11 @@ module.exports = {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
-          model: 'Investment', // name of the target model (Agents)
-          key: 'id',
+          model: "Investment", // name of the target model (Agents)
+          key: "id",
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE'
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       installment_amount: {
         type: Sequelize.FLOAT,
@@ -43,6 +43,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('InvestmentDetail');
-  }
+    await queryInterface.dropTable("InvestmentDetail");
+  },
 };

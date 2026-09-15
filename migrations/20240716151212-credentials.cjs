@@ -1,10 +1,10 @@
-'use strict';
+"use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Credentials', {
+    await queryInterface.createTable("Credentials", {
       id: {
         type: Sequelize.UUID,
-        defaultValue: Sequelize.UUIDV4,
+        defaultValue: Sequelize.UUIDV7,
         primaryKey: true,
         allowNull: false,
       },
@@ -20,11 +20,11 @@ module.exports = {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
-          model: 'Agent', // name of the target model (Agent)
-          key: 'id',
+          model: "Agent", // name of the target model (Agent)
+          key: "id",
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE'
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       createdAt: {
         type: Sequelize.DATE,
@@ -39,6 +39,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Credentials');
-  }
+    await queryInterface.dropTable("Credentials");
+  },
 };

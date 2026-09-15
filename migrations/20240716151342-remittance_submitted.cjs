@@ -1,10 +1,10 @@
-'use strict';
+"use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('RemittanceSubmitted', {
+    await queryInterface.createTable("RemittanceSubmitted", {
       id: {
         type: Sequelize.UUID,
-        defaultValue: Sequelize.UUIDV4,
+        defaultValue: Sequelize.UUIDV7,
         primaryKey: true,
         allowNull: false,
       },
@@ -12,31 +12,31 @@ module.exports = {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
-          model: 'RemittanceProcess', // name of the target model (Agents)
-          key: 'id',
+          model: "RemittanceProcess", // name of the target model (Agents)
+          key: "id",
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE'
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       process_calendar_id: {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
-          model: 'ProcessCalendar', // name of the target model (Agents)
-          key: 'id',
+          model: "ProcessCalendar", // name of the target model (Agents)
+          key: "id",
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE'
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       receipt_type_id: {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
-          model: 'ReceiptType', // name of the target model (Agents)
-          key: 'id',
+          model: "ReceiptType", // name of the target model (Agents)
+          key: "id",
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE'
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       no_of_installments: {
         type: Sequelize.INTEGER,
@@ -75,6 +75,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('RemittanceSubmitted');
-  }
+    await queryInterface.dropTable("RemittanceSubmitted");
+  },
 };

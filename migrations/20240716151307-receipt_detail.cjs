@@ -1,10 +1,10 @@
-'use strict';
+"use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('ReceiptDetail', {
+    await queryInterface.createTable("ReceiptDetail", {
       id: {
         type: Sequelize.UUID,
-        defaultValue: Sequelize.UUIDV4,
+        defaultValue: Sequelize.UUIDV7,
         primaryKey: true,
         allowNull: false,
       },
@@ -12,21 +12,21 @@ module.exports = {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
-          model: 'Investment', // name of the target model (Agents)
-          key: 'id',
+          model: "Investment", // name of the target model (Agents)
+          key: "id",
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE'
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       receipt_collection_id: {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
-          model: 'ReceiptCollection', // name of the target model (Agents)
-          key: 'id',
+          model: "ReceiptCollection", // name of the target model (Agents)
+          key: "id",
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE'
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       remittance_amount: {
         type: Sequelize.FLOAT,
@@ -40,11 +40,11 @@ module.exports = {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
-          model: 'ReceiptValidity', // name of the target model (Agents)
-          key: 'id',
+          model: "ReceiptValidity", // name of the target model (Agents)
+          key: "id",
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE'
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       createdAt: {
         type: Sequelize.DATE,
@@ -59,6 +59,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('ReceiptDetail');
-  }
+    await queryInterface.dropTable("ReceiptDetail");
+  },
 };

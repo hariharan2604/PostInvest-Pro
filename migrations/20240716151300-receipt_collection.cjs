@@ -1,10 +1,10 @@
-'use strict';
+"use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('ReceiptCollection', {
+    await queryInterface.createTable("ReceiptCollection", {
       id: {
         type: Sequelize.UUID,
-        defaultValue: Sequelize.UUIDV4,
+        defaultValue: Sequelize.UUIDV7,
         primaryKey: true,
         allowNull: false,
       },
@@ -12,11 +12,11 @@ module.exports = {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
-          model: 'ReceiptType', // name of the target model (Agents)
-          key: 'id',
+          model: "ReceiptType", // name of the target model (Agents)
+          key: "id",
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE'
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       receipt_date: {
         type: Sequelize.DATE,
@@ -26,11 +26,11 @@ module.exports = {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
-          model: 'Customer', // name of the target model (Agents)
-          key: 'id',
+          model: "Customer", // name of the target model (Agents)
+          key: "id",
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE'
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       receipt_amount: {
         type: Sequelize.FLOAT,
@@ -48,21 +48,21 @@ module.exports = {
         type: Sequelize.UUID,
         allowNull: true,
         references: {
-          model: 'BankDetail', // name of the target model (Agent)
-          key: 'id',
+          model: "BankDetail", // name of the target model (Agent)
+          key: "id",
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE'
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       instrument_class_id: {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
-          model: 'InstrumentClass', // name of the target model (Agents)
-          key: 'id',
+          model: "InstrumentClass", // name of the target model (Agents)
+          key: "id",
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE'
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       sb_acc_number: {
         type: Sequelize.STRING,
@@ -81,6 +81,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('ReceiptCollection');
-  }
+    await queryInterface.dropTable("ReceiptCollection");
+  },
 };

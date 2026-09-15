@@ -1,11 +1,11 @@
-'use strict';
+"use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('InvestmentStatus', {
+    await queryInterface.createTable("InvestmentStatus", {
       id: {
         type: Sequelize.UUID,
         primaryKey: true,
-        defaultValue: Sequelize.UUIDV4,
+        defaultValue: Sequelize.UUIDV7,
         allowNull: false,
       },
       investment_status_name: {
@@ -25,6 +25,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('InvestmentStatus');
-  }
+    await queryInterface.dropTable("InvestmentStatus");
+  },
 };

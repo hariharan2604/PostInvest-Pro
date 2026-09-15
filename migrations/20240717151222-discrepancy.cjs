@@ -1,10 +1,10 @@
-'use strict';
+"use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Discrepancy', {
+    await queryInterface.createTable("Discrepancy", {
       id: {
         type: Sequelize.UUID,
-        defaultValue: Sequelize.UUIDV4,
+        defaultValue: Sequelize.UUIDV7,
         primaryKey: true,
         allowNull: false,
       },
@@ -16,21 +16,21 @@ module.exports = {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
-          model: 'RemittanceProcess', // name of the target model (Agents)
-          key: 'id',
+          model: "RemittanceProcess", // name of the target model (Agents)
+          key: "id",
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE'
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       process_calendar_id: {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
-          model: 'ProcessCalendar', // name of the target model (Agents)
-          key: 'id',
+          model: "ProcessCalendar", // name of the target model (Agents)
+          key: "id",
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE'
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       customer_id: {
         type: Sequelize.UUID,
@@ -73,10 +73,10 @@ module.exports = {
         type: Sequelize.DATE,
         allowNull: false,
         defaultValue: Sequelize.NOW,
-      }
+      },
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Discrepancy');
-  }
+    await queryInterface.dropTable("Discrepancy");
+  },
 };

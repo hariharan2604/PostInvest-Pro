@@ -1,145 +1,47 @@
 'use strict';
-const { v4: uuidv4 } = require('uuid');
 
-/** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up(queryInterface, Sequelize) {
-    const tableName = "ProcessCalendar";
-    const data = [
-      {
-        id: uuidv4(),
-        year: "2024",
-        month: "1",
-        period: "1",
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        id: uuidv4(),
-        year: "2024",
-        month: "1",
-        period: "2",
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        id: uuidv4(),
-        year: "2024",
-        month: "2",
-        period: "1",
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        id: uuidv4(),
-        year: "2024",
-        month: "2",
-        period: "2",
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        id: uuidv4(),
-        year: "2024",
-        month: "3",
-        period: "1",
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        id: uuidv4(),
-        year: "2024",
-        month: "3",
-        period: "2",
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        id: uuidv4(),
-        year: "2024",
-        month: "4",
-        period: "1",
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        id: uuidv4(),
-        year: "2024",
-        month: "4",
-        period: "2",
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        id: uuidv4(),
-        year: "2024",
-        month: "5",
-        period: "1",
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        id: uuidv4(),
-        year: "2024",
-        month: "5",
-        period: "2",
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        id: uuidv4(),
-        year: "2024",
-        month: "6",
-        period: "1",
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        id: uuidv4(),
-        year: "2024",
-        month: "6",
-        period: "2",
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        id: uuidv4(),
-        year: "2024",
-        month: "7",
-        period: "1",
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        id: uuidv4(),
-        year: "2024",
-        month: "7",
-        period: "2",
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-    ]
+  async up(queryInterface) {
+    const { v7: uuidv7 } = await import('uuid');
+
+    const tableName = 'ProcessCalendar';
+    const data = [];
+
+    for (let month = 1; month <= 7; month++) {
+      for (let period = 1; period <= 2; period++) {
+        data.push({
+          id: uuidv7(),
+          year: '2024',
+          month: String(month),
+          period: String(period),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        });
+      }
+    }
+
     for (const item of data) {
       const exists = await queryInterface.rawSelect(
         tableName,
         {
-          where: { id: item.id }
+          where: {
+            year: item.year,
+            month: item.month,
+            period: item.period,
+          },
         },
         ['id']
       );
 
       if (!exists) {
-        await queryInterface.bulkInsert(tableName, [item], {});
+        await queryInterface.bulkInsert(tableName, [item]);
       }
     }
   },
 
-  async down (queryInterface, Sequelize) {
-    /**
-     * Add commands to revert seed here.
-     *
-     * Example:
-     * await queryInterface.bulkDelete('People', null, {});
-     */
-  }
+  async down(queryInterface) {
+    await queryInterface.bulkDelete('ProcessCalendar', {
+      year: '2024',
+    });
+  },
 };

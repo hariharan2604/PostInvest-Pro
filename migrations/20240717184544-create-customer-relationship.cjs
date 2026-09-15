@@ -1,11 +1,11 @@
-'use strict';
+"use strict";
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('CustomerRelationship', {
+    await queryInterface.createTable("CustomerRelationship", {
       id: {
         type: Sequelize.UUID,
-        defaultValue: Sequelize.UUIDV4,
+        defaultValue: Sequelize.UUIDV7,
         primaryKey: true,
         allowNull: false,
       },
@@ -13,25 +13,25 @@ module.exports = {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
-          model: 'Customer',
-          key: 'id',
+          model: "Customer",
+          key: "id",
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       relatedCustomerId: {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
-          model: 'Customer',
-          key: 'id',
+          model: "Customer",
+          key: "id",
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       relationship: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
       },
       createdAt: {
         type: Sequelize.DATE,
@@ -46,11 +46,13 @@ module.exports = {
     });
 
     // Add indexes for performance
-    await queryInterface.addIndex('CustomerRelationship', ['customerId']);
-    await queryInterface.addIndex('CustomerRelationship', ['relatedCustomerId']);
+    await queryInterface.addIndex("CustomerRelationship", ["customerId"]);
+    await queryInterface.addIndex("CustomerRelationship", [
+      "relatedCustomerId",
+    ]);
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('CustomerRelationship');
-  }
+    await queryInterface.dropTable("CustomerRelationship");
+  },
 };
